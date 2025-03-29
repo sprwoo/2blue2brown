@@ -1,14 +1,17 @@
-import { Button } from "@/components/ui/button";
-import PDFDropbox from "@/components/PDFDropbox";
-import TextBox from "@/components/TextBox";
+"use client";
+
+import Sidebar from "@/components/Sidebar";
+import ChatWindow from "@/components/ChatWindow";
+import { useState } from "react";
 
 export default function Home() {
+  const [user, setUser] = useState<string>("Broski");
+  // we'll change these states later probably
+  const [session, setSession] = useState<string>("Session 1")
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen p-8 gap-8">
-      <h1 className="text-3xl font-bold">PDF Upload & Text Input</h1>
-      <PDFDropbox />
-      <TextBox placeholder="Enter your text here..." />
-      <Button className="bg-red-100">Submit</Button>
-    </div>
+    <main className="flex h-screen">
+      <Sidebar user={user} session={session} setSession={setSession}/>
+      <ChatWindow user={user} session={session} />
+    </main>
   );
 }
