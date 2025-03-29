@@ -2,7 +2,6 @@ import os
 import requests
 from dotenv import load_dotenv
 
-# Load environment variables from .env file
 load_dotenv()
 
 SUPABASE_URL = os.getenv('supaurl')
@@ -10,7 +9,6 @@ SUPABASE_ANON_KEY = os.getenv('supakey')
 
 def check_connection():
     try:
-        # Query the Papers table for at most one record
         url = f"{SUPABASE_URL}/rest/v1/Papers?limit=1"
         headers = {
             'Content-Type': 'application/json',
