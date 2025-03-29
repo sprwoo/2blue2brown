@@ -15,7 +15,13 @@ type Message = {
   imageUrl?: string;
 };
 
-export default function ChatWindow() {
+export default function ChatWindow({
+  user,
+  session,
+}: {
+  user: string;
+  session: string;
+}) {
   const [messages, setMessages] = useState<Message[]>([
     {
       sender: "user",
@@ -87,8 +93,8 @@ export default function ChatWindow() {
 
   return (
     <div className="flex flex-col max-w-[1200px] bg-zinc-950">
-      <div className="border-b border-zinc-800 p-4 text-sm font-semibold text-zinc-200">
-        AI Chat Session
+      <div className="border-b border-zinc-800 p-4 h-17.25 text-sm font-semibold text-zinc-200">
+        {session}
       </div>
       <div className="flex-1 overflow-y-auto px-4 py-6 space-y-6">
         {messages.map((msg, idx) => (

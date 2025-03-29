@@ -3,6 +3,7 @@
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Plus } from "lucide-react";
+import React from "react";
 
 const mockChats = [
   { id: 1, title: "Math Notes", timestamp: "Mar 28" },
@@ -10,13 +11,22 @@ const mockChats = [
   { id: 3, title: "AI Chat", timestamp: "Mar 25" },
 ];
 
-export default function Sidebar() {
+export default function Sidebar({
+  user,
+  session,
+  setSession,
+}: {
+  user: string;
+  session: string;
+  setSession: React.Dispatch<React.SetStateAction<string>>;
+}) {
   return (
     <div className="w-64 bg-zinc-900 border-r border-zinc-700 flex flex-col">
       <div className="p-4 border-b border-zinc-700">
         <Button
           className="w-full cursor-pointer flex gap-2 bg-zinc-800 text-zinc-100 hover:bg-zinc-700 transition-colors duration-200"
           variant="secondary"
+          onClick={() => setSession("New session")}
         >
           <Plus className="mr-2 h-4 w-4" />
           New Chat
