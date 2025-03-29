@@ -53,8 +53,8 @@ def main():
     
     # Step 3: Extract the generated code.
     try:
-        # Use attribute access instead of subscript notation.
-        manim_code = response.choices[0].message["content"]
+        # Use attribute access to get the generated code.
+        manim_code = response.choices[0].message.content
     except (AttributeError, KeyError, IndexError) as e:
         print("API response did not contain the expected code, using demo scene code instead.")
         manim_code = DEMO_SCENE_CODE
