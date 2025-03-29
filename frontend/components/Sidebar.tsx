@@ -14,7 +14,10 @@ export default function Sidebar() {
   return (
     <div className="w-64 bg-zinc-900 border-r border-zinc-700 flex flex-col">
       <div className="p-4 border-b border-zinc-700">
-        <Button className="w-full" variant="secondary">
+        <Button
+          className="w-full cursor-pointer flex gap-2 bg-zinc-800 text-zinc-100 hover:bg-zinc-700 transition-colors duration-200"
+          variant="secondary"
+        >
           <Plus className="mr-2 h-4 w-4" />
           New Chat
         </Button>

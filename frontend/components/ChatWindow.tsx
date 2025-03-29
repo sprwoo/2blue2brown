@@ -86,13 +86,10 @@ export default function ChatWindow() {
   };
 
   return (
-    <div className="flex flex-col w-screen h-screen bg-zinc-950">
-      {/* Header */}
+    <div className="flex flex-col max-w-[1200px] bg-zinc-950">
       <div className="border-b border-zinc-800 p-4 text-sm font-semibold text-zinc-200">
         AI Chat Session
       </div>
-
-      {/* Scrollable Chat Area */}
       <div className="flex-1 overflow-y-auto px-4 py-6 space-y-6">
         {messages.map((msg, idx) => (
           <div key={idx} className="flex items-start gap-4 w-full">
@@ -104,7 +101,7 @@ export default function ChatWindow() {
               )}
             </div>
             <div
-              className={`flex-1 px-4 py-3 text-[15px] leading-relaxed ${
+              className={`flex-1 px-4 py-3 text-[15px] leading-relaxed break-words overflow-x-hidden ${
                 msg.sender === "user"
                   ? "bg-zinc-800 text-zinc-100"
                   : "bg-zinc-900 text-zinc-100"
@@ -145,7 +142,6 @@ export default function ChatWindow() {
         <div ref={scrollRef} />
       </div>
 
-      {/* File Preview + Input (Fixed at bottom) */}
       <div
         {...getRootProps()}
         className={`border-t border-zinc-800 p-4 relative ${
