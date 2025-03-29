@@ -1,8 +1,7 @@
 "use client";
 
-import { useState, useCallback } from "react";
+import { useState, useRef, useEffect, useCallback } from "react";
 import { useDropzone } from "react-dropzone";
-import { ScrollArea } from "@/components/ui/scroll-area";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { Send, User, Bot, X } from "lucide-react";
@@ -32,6 +31,11 @@ export default function ChatWindow() {
   const [file, setFile] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [dragActive, setDragActive] = useState(false);
+  const scrollRef = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    scrollRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [messages]);
 
   const onDrop = useCallback((acceptedFiles: File[]) => {
     const droppedFile = acceptedFiles[0];
@@ -61,15 +65,14 @@ export default function ChatWindow() {
       sender: "user",
       content: input,
       file,
-      imageUrl: file && file.type.startsWith("image/") ? previewUrl! : undefined,
+      imageUrl:
+        file && file.type.startsWith("image/") ? previewUrl! : undefined,
     };
 
     setMessages((prev) => [...prev, newMessage]);
     setInput("");
     setFile(null);
     setPreviewUrl(null);
-
-    // Simulated AI response (for testing purposes)
     setTimeout(() => {
       setMessages((prev) => [
         ...prev,
@@ -83,14 +86,14 @@ export default function ChatWindow() {
   };
 
   return (
-    <div className="flex flex-col flex-1 bg-zinc-950">
+    <div className="flex flex-col w-screen h-screen bg-zinc-950">
       {/* Header */}
       <div className="border-b border-zinc-800 p-4 text-sm font-semibold text-zinc-200">
         AI Chat Session
       </div>
 
-      {/* Chat History */}
-      <ScrollArea className="flex-1 space-y-6 px-4 py-6">
+      {/* Scrollable Chat Area */}
+      <div className="flex-1 overflow-y-auto px-4 py-6 space-y-6">
         {messages.map((msg, idx) => (
           <div key={idx} className="flex items-start gap-4 w-full">
             <div className="mt-1">
@@ -100,7 +103,6 @@ export default function ChatWindow() {
                 <Bot className="h-5 w-5 text-green-400" />
               )}
             </div>
-
             <div
               className={`flex-1 px-4 py-3 text-[15px] leading-relaxed ${
                 msg.sender === "user"
@@ -140,12 +142,13 @@ export default function ChatWindow() {
             </div>
           </div>
         ))}
-      </ScrollArea>
+        <div ref={scrollRef} />
+      </div>
 
-      {/* File Preview */}
+      {/* File Preview + Input (Fixed at bottom) */}
       <div
         {...getRootProps()}
-        className={`border-t border-zinc-800 p-4 relative transition-all ${
+        className={`border-t border-zinc-800 p-4 relative ${
           dragActive ? "border-2 border-dashed border-blue-400 bg-zinc-900" : ""
         }`}
       >
@@ -185,7 +188,7 @@ export default function ChatWindow() {
           </div>
         )}
 
-        {/* Input + Send */}
+        {/* Input and Send */}
         <div className="flex items-center gap-2">
           <Textarea
             placeholder="Type your message or drag a file..."
