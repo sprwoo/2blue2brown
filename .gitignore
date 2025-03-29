@@ -6,3 +6,5 @@ frontend/node_modules/
 __pycache__/
 *.pyc
 .venv/
+*/media/
+/backend/app/api/media/

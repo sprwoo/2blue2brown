@@ -1,4 +1,5 @@
 import os
+import re
 import subprocess
 import sys
 from dotenv import load_dotenv
@@ -17,6 +18,24 @@ class MainScene(Scene):
         self.play(Write(text))
         self.wait(2)
 '''
+
+def extract_python_code(text):
+    """
+    Extracts Python code from the API response.
+    It looks for a code block delimited by triple backticks with an optional 'python' specifier.
+    If no code block is found, it searches for the first occurrence of 'from manim'
+    and returns everything from that point.
+    """
+    # Try to find a code block using triple backticks and optional 'python'
+    code_block_pattern = r"```(?:python)?\s*(.*?)\s*```"
+    match = re.search(code_block_pattern, text, re.DOTALL)
+    if match:
+        return match.group(1).strip()
+    # Fallback: look for the start of valid code.
+    start_index = text.find("from manim")
+    if start_index != -1:
+        return text[start_index:].strip()
+    return text.strip()
 
 def main():
     # Step 1: Get a topic or group of ideas from the user.
@@ -60,10 +79,10 @@ def main():
         print("Error calling API:", e)
         sys.exit(1)
     
-    # Step 3: Extract the generated code.
+    # Step 3: Extract and clean the generated code.
     try:
-        # Use attribute access to get the generated code.
-        manim_code = response.choices[0].message.content
+        raw_response = response.choices[0].message.content
+        manim_code = extract_python_code(raw_response)
     except (AttributeError, KeyError, IndexError) as e:
         print("API response did not contain the expected code, using demo scene code instead.")
         manim_code = DEMO_SCENE_CODE
