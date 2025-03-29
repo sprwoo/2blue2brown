@@ -12,7 +12,7 @@ SUPABASE_ANON_KEY = os.getenv('supakey')
 app = Flask(__name__)
 CORS(app)
 
-def check_connection():
+def get_test():
     try:
         url = f"{SUPABASE_URL}/rest/v1/chat_messages?"
         
@@ -33,7 +33,7 @@ def check_connection():
     except Exception as error:
         return {"error": str(error)}
 
-def post_test():
+def post_test(sender, message):
     try:
         url = f"{SUPABASE_URL}/rest/v1/chat_messages?"
         
@@ -46,8 +46,8 @@ def post_test():
         }
         
         data = {
-            "sender": "user",
-            "message": "Hello, World!"
+            "sender": sender,
+            "message": message
         }
         
         response = requests.post(url, headers=headers, json=data)
@@ -59,20 +59,54 @@ def post_test():
     except Exception as error:
         return {"error": str(error)}
 
+def get_chat_sessions(uuid):
+    try:
+        url = f"{SUPABASE_URL}/rest/v1/chat_sessions?title=eq.{uuid}"  # Filter by user_id
+        
+        headers = {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',
+            'apikey': SUPABASE_ANON_KEY,
+            'Authorization': f'Bearer {SUPABASE_ANON_KEY}',
+            'Accept-Profile': 'chatbotschema'
+        }
+
+        response = requests.get(url, headers=headers)
+        if response.status_code == 200:
+            return response.json()
+        else:
+            return {"error": response.text}
+    
+    except Exception as error:
+        return {"error": str(error)}
+
 
 @app.route("/api", methods=["GET"])
 def home():
     return jsonify({"message": "Hello from Flask!"})
 
-@app.route("/api/check_connection", methods=["GET"])
-def api_check_connection():
-    result = check_connection()
+@app.route("/api/get_test", methods=["GET"])
+def api_get_test():
+    result = get_test()
     return jsonify(result)
 
 @app.route("/api/post_test", methods=["POST"])
 def api_post_test():
-    result = post_test()
+    data = request.json
+    sender = data.get('sender', 'user')  
+    message = data.get('message', 'No message provided')
+    result = post_test(sender, message)
     return jsonify(result)
+
+@app.route("/api/get_chat_sessions", methods=["GET"])
+def get_chat_session():
+    uuid = request.args.get("uuid")  # Get the UUID from query params
+    if not uuid:
+        return jsonify({"error": "UUID is required"}), 400
+
+    data = get_chat_sessions(uuid)
+    return jsonify(data)
 
 if __name__ == "__main__":
     app.run(debug=True, port=5001)
+    
