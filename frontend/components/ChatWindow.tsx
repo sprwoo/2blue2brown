@@ -101,7 +101,7 @@ export default function ChatWindow() {
               )}
             </div>
             <div
-              className={`flex-1 px-4 py-3 text-[15px] leading-relaxed break-words overflow-x-hidden ${
+              className={`flex-1 px-4 py-3 text-[15px] leading-relaxed break-words rounded overflow-x-hidden ${
                 msg.sender === "user"
                   ? "bg-zinc-800 text-zinc-100"
                   : "bg-zinc-900 text-zinc-100"
@@ -184,8 +184,7 @@ export default function ChatWindow() {
           </div>
         )}
 
-        {/* Input and Send */}
-        <div className="flex items-center gap-2">
+        <div className="flex items-center justify-between gap-2 w-[1150px]">
           <Textarea
             placeholder="Type your message or drag a file..."
             className="flex-1 resize-none h-10"
@@ -199,7 +198,7 @@ export default function ChatWindow() {
               }
             }}
           />
-          <Button onClick={handleSend} className="h-10 px-4">
+          <Button onClick={handleSend} className="h-[62px] cursor-pointer px-4">
             <Send className="h-4 w-4" />
           </Button>
         </div>
