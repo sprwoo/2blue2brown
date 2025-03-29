@@ -19,8 +19,16 @@ class MainScene(Scene):
 '''
 
 def main():
-    # Step 1: Get a prompt from the user.
-    prompt = input("Enter your prompt for the Nebius Studio Deepseek R1 API: ")
+    # Step 1: Get a topic or group of ideas from the user.
+    user_topic = input("Enter the topic or ideas for your Manim scene: ")
+
+    # The engineered prompt to ensure the model outputs only valid Manim code.
+    system_prompt = (
+        "You are an expert in Manim and you must output only valid Python code that defines a complete Manim scene. "
+        "Your output should not include any text, comments, or explanations outside of the code. "
+        "The code must be self-contained and executable as-is, defining a Manim Scene (for example, a class named \"MainScene\") "
+        "that animates something simple like a text greeting. Do not output anything except the Python code."
+    )
 
     # Retrieve your API key from the environment variable set in the .env file.
     api_key = os.getenv("NEBIUS_API_KEY")
@@ -34,9 +42,10 @@ def main():
         api_key=api_key
     )
 
-    # Prepare the conversation messages.
+    # Prepare the conversation messages with a system message and the user prompt.
     messages = [
-        {"role": "user", "content": prompt}
+        {"role": "system", "content": system_prompt},
+        {"role": "user", "content": user_topic}
     ]
 
     try:
