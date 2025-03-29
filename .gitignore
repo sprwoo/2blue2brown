@@ -4,4 +4,5 @@ frontend/.next/
 frontend/node_modules/
 **/venv/
 __pycache__/
+.venv/
 *.pyc
