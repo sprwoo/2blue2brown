@@ -1,32 +1,19 @@
 import os
 import requests
 from dotenv import load_dotenv
+from flask import Flask, jsonify, request
+from flask_cors import CORS
 
 load_dotenv()
 
 SUPABASE_URL = os.getenv('supaurl')
 SUPABASE_ANON_KEY = os.getenv('supakey')
 
-"""
-    To connect to a database, the url should be:
-        url = f"{SUPABASE_URL}/rest/v1/{table_name}?"
-
-    and the header:
-        headers = {
-            'Content-Type': ...,
-            'Accept': ...,
-            'apikey': SUPABASE_ANON_KEY,
-            'Authorization': f'Bearer {SUPABASE_ANON_KEY}',
-            'Accept-Profile': 'chatbotschema' # IF DOING A GET REQUEST
-            'Content-Profile': 'chatbotschema' # IF DOING A POST REQUEST
-        }
-
-    Then you should be able to make GET or POST requests to the database.
-"""
+app = Flask(__name__)
+CORS(app)
 
 def check_connection():
     try:
-        # Use the correct endpoint for the table (schema name should not be in the path)
         url = f"{SUPABASE_URL}/rest/v1/chat_messages?"
         
         headers = {
@@ -38,18 +25,15 @@ def check_connection():
         }
         
         response = requests.get(url, headers=headers)
-        print(f"Response Status: {response.status_code}")
-        
         if response.status_code == 200:
-            print("Database connection successful!")
-            print("Response Body:", response.json())
+            return response.json()
         else:
-            print("Error connecting to database:", response.text)
+            return {"error": response.text}
     
     except Exception as error:
-        print("An error occurred:", error)
+        return {"error": str(error)}
 
-def post_test():
+def post_test(sender, message):
     try:
         url = f"{SUPABASE_URL}/rest/v1/chat_messages?"
         
@@ -62,21 +46,35 @@ def post_test():
         }
         
         data = {
-            "sender": "user",
-            "message": "Hello, World!"
+            "sender": sender,
+            "message": message
         }
         
         response = requests.post(url, headers=headers, json=data)
-        print(f"Response Status: {response.status_code}")
-        
         if response.status_code == 201:
-            print("Data posted successfully!")
-            print("Response Body:", response.json())
+            return {"success": "Data posted successfully!", "data": response.json()}
         else:
-            print("Error posting data:", response.text)
+            return {"error": response.text}
     
     except Exception as error:
-        print("An error occurred:", error)
+        return {"error": str(error)}
 
-if __name__ == '__main__':
-    post_test()
+@app.route("/api", methods=["GET"])
+def home():
+    return jsonify({"message": "Hello from Flask!"})
+
+@app.route("/api/check_connection", methods=["GET"])
+def api_check_connection():
+    result = check_connection()
+    return jsonify(result)
+
+@app.route("/api/post_test", methods=["POST"])
+def api_post_test():
+    data = request.json
+    sender = data.get('sender', 'user')  
+    message = data.get('message', 'No message provided')
+    result = post_test(sender, message)
+    return jsonify(result)
+
+if __name__ == "__main__":
+    app.run(debug=True, port=5001)
