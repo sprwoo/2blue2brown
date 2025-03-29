@@ -1,9 +1,14 @@
 import { Button } from "@/components/ui/button";
+import PDFDropbox from "@/components/PDFDropbox";
+import TextBox from "@/components/TextBox";
 
 export default function Home() {
   return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <Button className="bg-red-100">Button example</Button>
+    <div className="flex flex-col items-center justify-center min-h-screen p-8 gap-8">
+      <h1 className="text-3xl font-bold">PDF Upload & Text Input</h1>
+      <PDFDropbox />
+      <TextBox placeholder="Enter your text here..." />
+      <Button className="bg-red-100">Submit</Button>
     </div>
   );
 }
