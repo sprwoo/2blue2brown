@@ -7,39 +7,42 @@ import { Button } from "@/components/ui/button";
 import { Send, User, Bot, X } from "lucide-react";
 import Image from "next/image";
 import ReactMarkdown from "react-markdown";
-import { Session } from "@/lib/types";
-
-type Message = {
-  sender: "user" | "ai";
-  content: string;
-  file?: File | null;
-  imageUrl?: string;
-};
+import { Session, Message } from "@/lib/types";
 
 export default function ChatWindow({
   user,
-  session,
-  setSession,
+  currentSession,
+  setCurrentSession,
+  messageHistory,
+  setMessageHistory,
   newSession,
   setNewSession
-}: {
+}: {  
   user: string;
-  session: Session | null;
-  setSession: React.Dispatch<React.SetStateAction<Session | null>>;
+  currentSession: Session | null;
+  setCurrentSession: React.Dispatch<React.SetStateAction<Session | null>>;
+  messageHistory: Message[];
+  setMessageHistory: React.Dispatch<React.SetStateAction<Message[]>>;
   newSession: boolean;
   setNewSession: React.Dispatch<React.SetStateAction<boolean>>;
 }) {
-  const [messages, setMessages] = useState<Message[]>([
-    {
-      sender: "user",
-      content: "What is the Pythagorean theorem?",
-    },
-    {
-      sender: "ai",
-      content:
-        "The Pythagorean theorem states that:\n\n**a² + b² = c²**\n\nWhere *a* and *b* are the legs of a right triangle and *c* is the hypotenuse.",
-    },
-  ]);
+  // const [messages, setMessages] = useState<Message[]>([
+  //   {
+  //     id: null,
+  //     session_id: null,
+  //     time_created: null,
+  //     sender: "user",
+  //     content: "What is the Pythagorean theorem?",
+  //   },
+  //   {
+  //     id: null,
+  //     session_id: null,
+  //     time_created: null,
+  //     sender: "ai",
+  //     content:
+  //       "The Pythagorean theorem states that:\n\n**a² + b² = c²**\n\nWhere *a* and *b* are the legs of a right triangle and *c* is the hypotenuse.",
+  //   },
+  // ]);
   const [input, setInput] = useState("");
   const [file, setFile] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
@@ -52,22 +55,23 @@ export default function ChatWindow({
         `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/get_latest_session`
       );
       const latestSession = await response.json();
-      setSession(latestSession);
+      setCurrentSession(latestSession);
     };
     fetchLatestSession();
   }, []);
 
   useEffect(() => {
     scrollRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [messages]);
+  }, [messageHistory]);
 
   useEffect(() => {
     if (newSession) {
-      setMessages([]);
+      setMessageHistory([]);
       setInput("");
       setFile(null);
       setPreviewUrl(null);
       setNewSession(false);
+      setCurrentSession(null);
     }
   }, [newSession, setNewSession]);
 
@@ -106,24 +110,32 @@ export default function ChatWindow({
     if (!input.trim() && !file) return;
 
     const newMessage: Message = {
+      id: null,
+      session_id: currentSession?.id || null,
       sender: "user",
-      content: input,
+      message: input,
       file,
       imageUrl:
         file && file.type.startsWith("image/") ? previewUrl! : undefined,
+      time_created: new Date().toISOString(),
     };
-
-    setMessages((prev) => [...prev, newMessage]);
+  
+    setMessageHistory((prev) => [...prev, newMessage]);
     setInput("");
     setFile(null);
     setPreviewUrl(null);
+
+    console.log("history", messageHistory);
     setTimeout(() => {
-      setMessages((prev) => [
+      setMessageHistory((prev) => [
         ...prev,
         {
+          id: null,
+          session_id: currentSession?.id || null,
           sender: "ai",
-          content:
+          message:
             "Here's what I found based on your upload:\n\n### Steps to Solve Quadratic\n\n1. Rearrange the equation\n2. Factor if possible\n3. Apply the quadratic formula\n\nLet me know if you'd like a deeper explanation!",
+          time_created: new Date().toISOString(),
         },
       ]);
     }, 1000);
@@ -132,11 +144,12 @@ export default function ChatWindow({
   return (
     <div className="flex flex-col max-w-[1200px] bg-zinc-950">
       <div className="border-b border-zinc-800 p-4 h-17.25 text-sm font-semibold text-zinc-200">
-        <div>{session?.title}</div>
-        <div>{session?.time_created}</div>
+        <div>{newSession ? "" : currentSession?.title || "New Chat"}</div>
+        <div>{newSession ? "" : currentSession?.time_created || ""}</div>
       </div>
       <div className="flex-1 overflow-y-auto px-4 py-6 space-y-6">
-        {messages.map((msg, idx) => (
+        {messageHistory.map((msg, idx) => {
+          return (
           <div key={idx} className="flex items-start gap-4 w-full">
             <div className="mt-1">
               {msg.sender === "user" ? (
@@ -159,7 +172,7 @@ export default function ChatWindow({
                   ),
                 }}
               >
-                {msg.content}
+                {msg.message}
               </ReactMarkdown>
 
               {msg.imageUrl && (
@@ -183,7 +196,7 @@ export default function ChatWindow({
                 )}
             </div>
           </div>
-        ))}
+        )})}
         <div ref={scrollRef} />
       </div>
 

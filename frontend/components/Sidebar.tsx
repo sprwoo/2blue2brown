@@ -2,24 +2,28 @@
 
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Session } from "@/lib/types";
+import { Session, Message } from "@/lib/types";
 import { Plus } from "lucide-react";
 import React, { useState, useEffect } from "react";
 
 export default function Sidebar({
   user,
-  session,
-  setSession,
-  sessions,
-  setSessions,
+  currentSession,
+  setCurrentSession,
+  messageHistory,
+  setMessageHistory,
+  sessionsList,
+  setSessionsList,
   newSession,
   setNewSession,
 }: {
   user: string;
-  session: Session | null;
-  setSession: React.Dispatch<React.SetStateAction<Session | null>>;
-  sessions: Session[];
-  setSessions: React.Dispatch<React.SetStateAction<Session[]>>;
+  currentSession: Session | null;
+  setCurrentSession: React.Dispatch<React.SetStateAction<Session | null>>;
+  messageHistory: Message[];
+  setMessageHistory: React.Dispatch<React.SetStateAction<Message[]>>;
+  sessionsList: Session[];
+  setSessionsList: React.Dispatch<React.SetStateAction<Session[]>>;
   newSession: boolean;
   setNewSession: React.Dispatch<React.SetStateAction<boolean>>;
 }) {
@@ -30,18 +34,27 @@ export default function Sidebar({
         `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/get_all_chat_sessions`
       );
       const results = await response.json();
-      setSessions(results);
+      setSessionsList(results);
     };
     getSessions();
   }, []);
 
-  useEffect(() => console.log("sessions", sessions));
+  useEffect(() => console.log("sessions", sessionsList));
   const handleSession = async (id: string) => {
-    const response = await fetch(
+    const session_response = await fetch(
       `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/get_chat_session?uuid=${id}`
     );
-    const result = await response.json();
-    setSession(result);
+    const session_result = await session_response.json();
+    console.log("results: ", session_result);
+
+    const history_response = await fetch(
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/get_chat_histories?chat_session_id=${id}`
+    );
+    const history_result = await history_response.json();
+    console.log("history: ", history_result);
+
+    setCurrentSession(session_result);
+    setMessageHistory(history_result);
   };
 
   return (
@@ -60,7 +73,7 @@ export default function Sidebar({
       </div>
       <ScrollArea className="flex-1">
         <div className="p-4 space-y-2">
-          {sessions.length > 0 && sessions?.map((session, index) => (
+          {sessionsList.length > 0 && sessionsList?.map((session, index) => (
             <div
               key={`${session.id}-${index}`}
               className="p-3 rounded-lg bg-zinc-800 hover:bg-zinc-700 cursor-pointer"
