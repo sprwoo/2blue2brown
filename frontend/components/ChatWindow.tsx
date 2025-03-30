@@ -267,7 +267,7 @@ export default function ChatWindow({
 
               try {
                 const response = await fetch(
-                  `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/upload_image`,
+                  `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/chat`,
                   {
                     method: "POST",
                     body: formData,
