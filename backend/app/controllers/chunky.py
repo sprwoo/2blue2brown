@@ -55,3 +55,28 @@ class Chunky():
         )
         
         return response.choices[0].message.content
+    
+    def advanced_image_handling(self, prompt, image_bytes):
+        response = self.client.chat.completions.create(
+            model="Qwen/Qwen2.5-VL-72B-Instruct",
+            temperature=0,
+            messages=[
+                {
+                    "rol": "user",
+                    "content": [
+                        {
+                            "type": "text",
+                            "text": f"A user asked about the image. Parse and understand the image and respond concisely, prompt from user: {prompt}"
+                        },
+                        {
+                            "type": "image_url",
+                            "image_url": {
+                                "url": f"data:image/jpeg;base64,{image_bytes}"
+                            }
+                        }
+                    ]
+                }
+            ]
+        )
+        
+        return response.choices[0].message.content
