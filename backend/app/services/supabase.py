@@ -64,7 +64,6 @@ def get_all_chat_sessions():
 def get_chat_histories(session_id):
     try:
         url = f"{SUPABASE_URL}/rest/v1/chat_messages?chat_session_id=eq.{session_id}&order=time_created.asc"
-        
         headers = {
             'Content-Type': 'application/json',
             'Accept': 'application/json',
