@@ -1,6 +1,7 @@
 from flask import Blueprint, jsonify, request
 from app.services.supabase import post_message, get_chat_histories
 import json
+from app.controllers import Chunky
 
 chat_bp = Blueprint("chat", __name__)
 
@@ -41,24 +42,33 @@ def handle_chat():
     data = request.get_json()
     user_input = data.get("user_input")
     session_id = data.get("session_id")
-    graph = build_graph()
+    image_summary = None
+    if "image" in request.files:
+        image_file = request.files["image"]
+        if image_file.filename != "":
+            file_bytes = image_file.read()
+            chunky = Chunky()
+            image_summary = chunky.advanced_image_handling(user_input, file_bytes)
+            print("image summary", image_summary)
+        
+    # graph = build_graph()
     
-    state = {
-        "user_input": user_input,
-        "session_id": session_id,
-    }
-    result = graph.invoke(state)
+    # state = {
+    #     "user_input": user_input,
+    #     "session_id": session_id,
+    # }
+    # result = graph.invoke(state)
     
-    # we'll now save the user and ai messages
-    chat_session_id = session_id
-    sender = "user"
-    message = user_input
-    post_status = post_message(sender, message, chat_session_id)
+    # # we'll now save the user and ai messages
+    # chat_session_id = session_id
+    # sender = "user"
+    # message = user_input
+    # post_status = post_message(sender, message, chat_session_id)
     
-    sender = "ai"
-    message = result.get("chat_response")
-    manim_code = "\n".join(result.get("code_chunks", [])) or None
-    post_status = post_message(sender, message, chat_session_id, manim_code=manim_code)
+    # sender = "ai"
+    # message = result.get("chat_response")
+    # manim_code = "\n".join(result.get("code_chunks", [])) or None
+    # post_status = post_message(sender, message, chat_session_id, manim_code=manim_code)
     
     return jsonify({
         "status": "success",
