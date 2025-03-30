@@ -16,7 +16,6 @@ class CombinedCodeGenerator:
                     import_lines.add(line.strip())
                 else:
                     block.append(line)
-            # Append the processed block (strip trailing whitespace)
             code_blocks.append("\n".join(block).strip())
 
         # Combine unique import lines at the top
