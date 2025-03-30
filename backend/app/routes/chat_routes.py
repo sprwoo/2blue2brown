@@ -25,23 +25,10 @@ def route_chat_histories():
         return jsonify({"error": "Missing chat_session_id parameter"}), 400
 
     try:
-        # Query chat histories using chat_session_id
         result = get_chat_histories(chat_session_id)
 
         for row in result:
             print(row)
-
-        # print("Raw result:", result)  # Debug: print raw result
-
-        # # If your service returns an object with a data field, extract it:
-        # history = result.get("data", result)
-
-        # messages = []
-        # for row in history:
-        #     # If row is a string, attempt to parse it.
-        #     if isinstance(row, str):
-        #         row = row.strip() and json.loads(row) or {}
-        #     messages.append(row)
         return jsonify(result), 200
     except Exception as e:
         return jsonify({"error": str(e)}), 500
