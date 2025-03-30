@@ -30,6 +30,7 @@ export default function Sidebar({
     getSessions();
   }, []);
 
+  useEffect(() => console.log("sessions", sessions));
   const handleSession = async (id: string) => {
     const response = await fetch(
       `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/get_chat_session?uuid=${id}`
@@ -52,7 +53,7 @@ export default function Sidebar({
       </div>
       <ScrollArea className="flex-1">
         <div className="p-4 space-y-2">
-          {sessions.map((session, index) => (
+          {sessions.length > 0 && sessions?.map((session, index) => (
             <div
               key={`${session.id}-${index}`}
               className="p-3 rounded-lg bg-zinc-800 hover:bg-zinc-700 cursor-pointer"

@@ -5,16 +5,16 @@ from dotenv import load_dotenv
 load_dotenv()
 
 SUPABASE_URL = os.getenv('supaurl')
+SUPABASE_ANON_KEY = os.getenv('supakey')
 
-
-def get_chat_session(uuid, user_token):
+def get_chat_session(uuid):
     try:
         url = f"{SUPABASE_URL}/rest/v1/chat_sessions?id=eq.{uuid}"
         headers = {
             'Content-Type': 'application/json',
             'Accept': 'application/json',
-            'Authorization': f'Bearer {user_token}',
-            'Accept-Profile': 'chatbotschema'
+            'Accept-Profile': 'chatbotschema',
+            'apikey': SUPABASE_ANON_KEY
         }
         response = requests.get(url, headers=headers)
         if response.status_code == 200:
@@ -25,14 +25,14 @@ def get_chat_session(uuid, user_token):
         return {"error": str(error)}
 
 
-def get_latest_chat_session(user_token):
+def get_latest_chat_session():
     try:
         url = f"{SUPABASE_URL}/rest/v1/chat_sessions?order=time_created.desc&limit=1"
         headers = {
             'Content-Type': 'application/json',
             'Accept': 'application/json',
-            'Authorization': f'Bearer {user_token}',
-            'Accept-Profile': 'chatbotschema'
+            'Accept-Profile': 'chatbotschema',
+            'apikey': SUPABASE_ANON_KEY
         }
         response = requests.get(url, headers=headers)
         if response.status_code == 200:
@@ -43,14 +43,14 @@ def get_latest_chat_session(user_token):
         return {"error": str(error)}
 
 
-def get_all_chat_sessions(uuid, user_token):
+def get_all_chat_sessions():
     try:
-        url = f"{SUPABASE_URL}/rest/v1/chat_sessions?id=eq.{uuid}&order=time_created.desc"
+        url = f"{SUPABASE_URL}/rest/v1/chat_sessions?order=time_created.desc"
         headers = {
             'Content-Type': 'application/json',
             'Accept': 'application/json',
-            'Authorization': f'Bearer {user_token}',
-            'Accept-Profile': 'chatbotschema'
+            'Accept-Profile': 'chatbotschema',
+            'apikey': SUPABASE_ANON_KEY
         }
         response = requests.get(url, headers=headers)
         if response.status_code == 200:
@@ -61,14 +61,14 @@ def get_all_chat_sessions(uuid, user_token):
         return {"error": str(error)}
 
 
-def get_chat_histories(session_id, user_token):
+def get_chat_histories(session_id):
     try:
         url = f"{SUPABASE_URL}/rest/v1/chat_messages?chat_session_id=eq.{session_id}&order=time.asc"
         headers = {
             'Content-Type': 'application/json',
             'Accept': 'application/json',
-            'Authorization': f'Bearer {user_token}',
-            'Accept-Profile': 'chatbotschema'
+            'Accept-Profile': 'chatbotschema',
+            'apikey': SUPABASE_ANON_KEY
         }
         response = requests.get(url, headers=headers)
         if response.status_code == 200:
@@ -79,14 +79,14 @@ def get_chat_histories(session_id, user_token):
         return {"error": str(error)}
 
 
-def post_chat_session(session_title, user_token):
+def post_chat_session(session_title):
     try:
         url = f"{SUPABASE_URL}/rest/v1/chat_sessions"
         headers = {
             'Content-Type': 'application/json',
             'Accept': 'application/json',
-            'Authorization': f'Bearer {user_token}',
-            'Content-Profile': 'chatbotschema'
+            'Content-Profile': 'chatbotschema',
+            'apikey': SUPABASE_ANON_KEY
         }
         data = {"title": session_title}
         response = requests.post(url, headers=headers, json=data)
@@ -98,14 +98,14 @@ def post_chat_session(session_title, user_token):
         return {"error": str(error)}
 
 
-def post_message(sender, message, user_token):
+def post_message(sender, message):
     try:
         url = f"{SUPABASE_URL}/rest/v1/chat_messages"
         headers = {
             'Content-Type': 'application/json',
             'Accept': 'application/json',
-            'Authorization': f'Bearer {user_token}',
-            'Content-Profile': 'chatbotschema'
+            'Content-Profile': 'chatbotschema',
+            'apikey': SUPABASE_ANON_KEY
         }
         data = {
             "sender": sender,
