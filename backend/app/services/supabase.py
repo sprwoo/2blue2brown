@@ -69,7 +69,7 @@ def get_chat_histories(session_id):
     except Exception as error:
         return {"error": str(error)}
 
-def post_message(sender, message):
+def post_message(sender, message, user_token):
     try:
         url = f"{SUPABASE_URL}/rest/v1/chat_messages?"
         
