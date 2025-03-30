@@ -16,14 +16,27 @@ def route_send_message():
     result = post_message(sender, message)
     return jsonify(result), 200
 
+
 @chat_bp.route("/get_chat_histories", methods=["GET"])
 def route_chat_histories():
     session_id = request.args.get("session_id")
     if not session_id:
-        return jsonify({"error": "Session ID is required"}), 400
-
-    data = get_chat_histories(session_id)
-    return jsonify(data)
+        return jsonify({"error": "Missing session_id parameter"}), 400
+    
+    try:
+        history = get_chat_histories(session_id)
+        messages = []
+        for row in history:
+            messages.append({
+                "sender": row.get("sender"),
+                "content": row.get("message"),
+                "image_url": row.get("image_url"),
+                "manim_code": row.get("manim_code"),
+                "time_created": row.get("time_created"),
+            })
+        return jsonify(messages), 200
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
 
 
 @chat_bp.route("/chat", methods=["POST"])
