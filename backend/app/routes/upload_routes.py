@@ -12,7 +12,7 @@ def route_upload_image():
     if image_file.filename == "":
         return jsonify({"error": "No selected file"}), 400
 
-    file_bytes = image_file.read() # Hetul this is the raw bytes to store as blob
+    file_bytes = image_file.read()
 
     print("File received:")
     print(f"Filename: {image_file.filename}")

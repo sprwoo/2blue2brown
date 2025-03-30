@@ -36,11 +36,11 @@ def route_chat_histories():
 
 @chat_bp.route("/chat", methods=["POST"])
 def handle_chat():
+    # generate the script
     from app.controllers import build_graph
     data = request.get_json()
     user_input = data.get("user_input")
     session_id = data.get("session_id")
-    print(user_input, session_id)
     graph = build_graph()
     
     state = {
@@ -49,16 +49,7 @@ def handle_chat():
     }
     result = graph.invoke(state)
     
-    # if result.get("make_video"):
-    #     return jsonify({
-    #         "code_chunks": result.get("code_chunks", []),
-    #         "message": "Generated animation code.",
-    #     })
-    # else:
-    #     return jsonify({
-    #         "response": result.get("chat_response"),
-    #         "message": "Text response only.",
-    #     })
+    print("final state of graph", result)
     
     return jsonify({
         "status": "success",

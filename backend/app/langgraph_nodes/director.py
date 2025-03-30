@@ -1,7 +1,30 @@
 from app.controllers import Chunky
 import json
+import asyncio
 
-def generate_script_chunks(state):
+async def summary(state):
+    user_input = state.get("user_input")
+    chat_summary = state.get("chat_summary", "")
+    prompt = (
+        "You are a helpful, conversational tutor.\n\n"
+        "Below is a summary of the previous conversation. Use it to understand the user's background knowledge, tone, or recent topics if relevant.\n"
+        "However, the user's latest message may shift topics — always prioritize answering their current request.\n\n"
+        "Respond clearly and concisely, but feel free to build on earlier concepts if it seems useful.\n\n"
+        f"Chat Summary:\n{chat_summary}\n\n"
+        f"User Message:\n{user_input}\n\n"
+        "Your response:"
+    )
+    
+    chunky = Chunky()
+    response = chunky.basic_response(prompt)
+    
+    print("summary response", response)
+    
+    return {
+        "chat_response": response,
+    }
+
+async def generate_script_chunks(state):
     user_input = state.get("user_input")
     chat_summary = state.get("chat_summary", "")
     
@@ -40,7 +63,6 @@ def generate_script_chunks(state):
         "Output:"
     )
 
-
     chunky = Chunky()
     response = chunky.basic_response(prompt)
     try:
@@ -57,3 +79,14 @@ def generate_script_chunks(state):
     return {
         "scene_plan": scene_plan
     }
+    
+def run_director_and_summarizer(state):
+    return asyncio.run(_run_parallel_tasks(state))
+
+
+async def _run_parallel_tasks(state):
+    summary_task = summary(state)
+    script_task = generate_script_chunks(state)
+
+    summary_result, script_result = await asyncio.gather(summary_task, script_task)
+    return {**summary_result, **script_result}

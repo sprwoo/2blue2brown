@@ -25,7 +25,7 @@ def load_context(state):
     
     conversation_text = "\n".join([f"{m['role']}: {m['content']}" for m in recent_msgs])
     prompt = (
-        "Based on the following conversation texts, provide a summary of the conversation. Go through each message given by the ai and user and summarize each interaction, responding in a json like this: "
+        "Based on the following conversation texts, provide a summary of the conversation. Go through each message given by the ai and user and summarize each interaction, responding only in a json and nothing else like this: "
         "[{'sender': <ai or user>, 'interaction': <summary of their response>}, {'sender': <ai or user>, 'interaction': <summary of their response>}, ...]"
         f": \n\n{conversation_text}"
     )
