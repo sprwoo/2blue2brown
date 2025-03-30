@@ -100,7 +100,7 @@ def post_chat_session(session_title):
         return {"error": str(error)}
 
 
-def post_message(sender, message, chat_session_id, image_url=None, manim_code=None):
+def post_message(sender, message, chat_session_id, image_url=None, manim_code=None, image_summary=None):
     try:
         url = f"{SUPABASE_URL}/rest/v1/chat_messages"
         headers = {
@@ -114,7 +114,8 @@ def post_message(sender, message, chat_session_id, image_url=None, manim_code=No
             "message": message,
             "chat_session_id": chat_session_id,
             "image_url": image_url,
-            "manim_code": manim_code
+            "manim_code": manim_code,
+            "image_summary": image_summary
         }
         response = requests.post(url, headers=headers, json=data)
         if response.status_code == 201:

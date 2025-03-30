@@ -57,12 +57,13 @@ class Chunky():
         return response.choices[0].message.content
     
     def advanced_image_handling(self, prompt, image_bytes):
+        print("Prompt:", prompt)
         response = self.client.chat.completions.create(
-            model="Qwen/Qwen2.5-VL-72B-Instruct",
+            model="google/gemma-3-27b-it",
             temperature=0,
             messages=[
                 {
-                    "rol": "user",
+                    "role": "user",
                     "content": [
                         {
                             "type": "text",
@@ -78,5 +79,5 @@ class Chunky():
                 }
             ]
         )
-        
+        print("Response:", response.choices[0].message.content)
         return response.choices[0].message.content
