@@ -1,6 +1,6 @@
 from langgraph.graph import StateGraph, END
 
-from app.langraph_nodes import (
+from app.langgraph_nodes import (
     load_context,
     should_generate_video,
     chat_response,
