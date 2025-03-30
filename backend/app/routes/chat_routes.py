@@ -4,18 +4,18 @@ import json
 
 chat_bp = Blueprint("chat", __name__)
 
-@chat_bp.route("/send_message", methods=["POST"])
-def route_send_message():
-    data = request.json
-    chat_session_id = data.get('chat_session_id')
-    sender = data.get('sender')
-    message = data.get('message')
+# @chat_bp.route("/send_message", methods=["POST"])
+# def route_send_message():
+#     data = request.json
+#     chat_session_id = data.get('chat_session_id')
+#     sender = data.get('sender')
+#     message = data.get('message')
 
-    if not all([chat_session_id, sender, message]):
-        return jsonify({"error": "chat_session_id, sender, and message are required"}), 400
+#     if not all([chat_session_id, sender, message]):
+#         return jsonify({"error": "chat_session_id, sender, and message are required"}), 400
 
-    result = post_message(sender, message)
-    return jsonify(result), 200
+#     result = post_message(sender, message)
+#     return jsonify(result), 200
 
 
 @chat_bp.route("/get_chat_histories", methods=["GET"])
@@ -49,7 +49,16 @@ def handle_chat():
     }
     result = graph.invoke(state)
     
-    print("final state of graph", result)
+    # we'll now save the user and ai messages
+    chat_session_id = session_id
+    sender = "user"
+    message = user_input
+    post_status = post_message(sender, message, chat_session_id)
+    
+    sender = "ai"
+    message = result.get("chat_response")
+    manim_code = "\n".join(result.get("code_chunks", [])) or None
+    post_status = post_message(sender, message, chat_session_id, manim_code=manim_code)
     
     return jsonify({
         "status": "success",

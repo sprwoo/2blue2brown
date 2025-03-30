@@ -43,7 +43,7 @@ async def generate_script_chunks(state):
         "- **Progression & Consistency:** The series should progress logically. For example, begin with a scene that introduces a single neuron (a circle with a label), "
         "follow with a scene that shows multiple neurons forming a basic neural network (with clear spatial arrangements like circles in vertical or horizontal lines connected by arrows), "
         "and then a scene that explains an LSTM cell by illustrating its internal structure (e.g., separate sections for input, cell state, and output gates).\n"
-        "- **Self-Containment:** Each scene must include a brief recap of the necessary context so that it makes sense on its own, given that it starts on a blank canvas.\n"
+        "- **Self-Containment:** Each scene must include a brief recap of the necessary context so that it makes sense on its own, you can't reference or build ontop of previous scenes, they are all independant, given that it starts on a blank canvas.\n"
         "- **Scene Description:** Provide precise, programmatic instructions for drawing the scene. For example, instead of saying \"draw a neural network diagram,\" say: "
         "\"Draw three circles of radius 0.5 evenly spaced vertically on the left side of the canvas; draw arrows connecting the top circle to the middle and the middle to the bottom; "
         "label the circles with Text objects 'Input', 'Hidden', and 'Output' respectively.\" \n"
