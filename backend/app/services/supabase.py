@@ -5,41 +5,35 @@ from dotenv import load_dotenv
 load_dotenv()
 
 SUPABASE_URL = os.getenv('supaurl')
-SUPABASE_ANON_KEY = os.getenv('supakey')
 
-def get_chat_session(uuid):
+
+def get_chat_session(uuid, user_token):
     try:
         url = f"{SUPABASE_URL}/rest/v1/chat_sessions?id=eq.{uuid}"
-        
         headers = {
             'Content-Type': 'application/json',
             'Accept': 'application/json',
-            'apikey': SUPABASE_ANON_KEY,
-            'Authorization': f'Bearer {SUPABASE_ANON_KEY}',
+            'Authorization': f'Bearer {user_token}',
             'Accept-Profile': 'chatbotschema'
         }
-
         response = requests.get(url, headers=headers)
         if response.status_code == 200:
             return response.json()
         else:
             return {"error": response.text}
-    
     except Exception as error:
         return {"error": str(error)}
 
-def get_latest_chat_session():
+
+def get_latest_chat_session(user_token):
     try:
         url = f"{SUPABASE_URL}/rest/v1/chat_sessions?order=time_created.desc&limit=1"
-
         headers = {
             'Content-Type': 'application/json',
             'Accept': 'application/json',
-            'apikey': SUPABASE_ANON_KEY,
-            'Authorization': f'Bearer {SUPABASE_ANON_KEY}',
+            'Authorization': f'Bearer {user_token}',
             'Accept-Profile': 'chatbotschema'
         }
-
         response = requests.get(url, headers=headers)
         if response.status_code == 200:
             return response.json()
@@ -48,18 +42,16 @@ def get_latest_chat_session():
     except Exception as error:
         return {"error": str(error)}
 
-def get_all_chat_sessions(uuid):
+
+def get_all_chat_sessions(uuid, user_token):
     try:
         url = f"{SUPABASE_URL}/rest/v1/chat_sessions?id=eq.{uuid}&order=time_created.desc"
-
         headers = {
             'Content-Type': 'application/json',
             'Accept': 'application/json',
-            'apikey': SUPABASE_ANON_KEY,
-            'Authorization': f'Bearer {SUPABASE_ANON_KEY}',
+            'Authorization': f'Bearer {user_token}',
             'Accept-Profile': 'chatbotschema'
         }
-
         response = requests.get(url, headers=headers)
         if response.status_code == 200:
             return response.json()
@@ -69,18 +61,15 @@ def get_all_chat_sessions(uuid):
         return {"error": str(error)}
 
 
-def get_chat_histories(session_id):
+def get_chat_histories(session_id, user_token):
     try:
         url = f"{SUPABASE_URL}/rest/v1/chat_messages?chat_session_id=eq.{session_id}&order=time.asc"
-        
         headers = {
             'Content-Type': 'application/json',
             'Accept': 'application/json',
-            'apikey': SUPABASE_ANON_KEY,
-            'Authorization': f'Bearer {SUPABASE_ANON_KEY}',
+            'Authorization': f'Bearer {user_token}',
             'Accept-Profile': 'chatbotschema'
         }
-
         response = requests.get(url, headers=headers)
         if response.status_code == 200:
             return response.json()
@@ -89,55 +78,43 @@ def get_chat_histories(session_id):
     except Exception as error:
         return {"error": str(error)}
 
-# UPDATE THIS WHEN UUID IS FIGURED OUT
-def post_chat_session(session_title):
+
+def post_chat_session(session_title, user_token):
     try:
-        url = f"{SUPABASE_URL}/rest/v1/chat_sessions?"
-        
+        url = f"{SUPABASE_URL}/rest/v1/chat_sessions"
         headers = {
             'Content-Type': 'application/json',
             'Accept': 'application/json',
-            'apikey': SUPABASE_ANON_KEY,
-            'Authorization': f'Bearer {SUPABASE_ANON_KEY}',
+            'Authorization': f'Bearer {user_token}',
             'Content-Profile': 'chatbotschema'
         }
-        
-        data = {
-            "title": session_title
-        }
-        
+        data = {"title": session_title}
         response = requests.post(url, headers=headers, json=data)
         if response.status_code == 201:
             return {"success": "Session created successfully!", "data": response.json()}
         else:
             return {"error": response.text}
-    
     except Exception as error:
         return {"error": str(error)}
 
-def post_message(sender, message):
+
+def post_message(sender, message, user_token):
     try:
-        url = f"{SUPABASE_URL}/rest/v1/chat_messages?"
-        
+        url = f"{SUPABASE_URL}/rest/v1/chat_messages"
         headers = {
             'Content-Type': 'application/json',
             'Accept': 'application/json',
-            'apikey': SUPABASE_ANON_KEY,
-            'Authorization': f'Bearer {SUPABASE_ANON_KEY}',
+            'Authorization': f'Bearer {user_token}',
             'Content-Profile': 'chatbotschema'
         }
-        
         data = {
             "sender": sender,
             "message": message
         }
-        
         response = requests.post(url, headers=headers, json=data)
         if response.status_code == 201:
             return {"success": "Message sent successfully!", "data": response.json()}
         else:
             return {"error": response.text}
-    
     except Exception as error:
-        return {"error": str(error)}
         return {"error": str(error)}
