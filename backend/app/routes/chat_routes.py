@@ -1,5 +1,6 @@
 from flask import Blueprint, jsonify, request
 from app.services.supabase import post_message, get_chat_histories
+import json
 
 chat_bp = Blueprint("chat", __name__)
 
@@ -19,21 +20,24 @@ def route_send_message():
 
 @chat_bp.route("/get_chat_histories", methods=["GET"])
 def route_chat_histories():
-    session_id = request.args.get("session_id")
-    if not session_id:
-        return jsonify({"error": "Missing session_id parameter"}), 400
-    
+    chat_session_id = request.args.get("chat_session_id")
+    if not chat_session_id:
+        return jsonify({"error": "Missing chat_session_id parameter"}), 400
+
     try:
-        history = get_chat_histories(session_id)
+        # Query chat histories using chat_session_id
+        result = get_chat_histories(chat_session_id)
+        print("Raw result:", result)  # Debug: print raw result
+
+        # If your service returns an object with a data field, extract it:
+        history = result.get("data", result)
+
         messages = []
         for row in history:
-            messages.append({
-                "sender": row.get("sender"),
-                "content": row.get("message"),
-                "image_url": row.get("image_url"),
-                "manim_code": row.get("manim_code"),
-                "time_created": row.get("time_created"),
-            })
+            # If row is a string, attempt to parse it.
+            if isinstance(row, str):
+                row = row.strip() and json.loads(row) or {}
+            messages.append(row)
         return jsonify(messages), 200
     except Exception as e:
         return jsonify({"error": str(e)}), 500
