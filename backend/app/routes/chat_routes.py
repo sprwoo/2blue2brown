@@ -37,11 +37,10 @@ def route_chat_histories():
 
 @chat_bp.route("/chat", methods=["POST"])
 def handle_chat():
-    # generate the script
     from app.controllers import build_graph
     data = request.get_json()
-    user_input = data.get("user_input")
-    session_id = data.get("session_id")
+    user_input = request.form.get("user_input")
+    session_id = request.form.get("session_id")
     image_summary = None
     if "image" in request.files:
         image_file = request.files["image"]

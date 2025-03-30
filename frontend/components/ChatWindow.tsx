@@ -264,10 +264,12 @@ export default function ChatWindow({
 
               const formData = new FormData();
               formData.append("image", file);
+              formData.append("session_id", "Session 1")
+              formData.append("user_input", input)
 
               try {
                 const response = await fetch(
-                  `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/chat`,
+                  `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/upload_image`,
                   {
                     method: "POST",
                     body: formData,
