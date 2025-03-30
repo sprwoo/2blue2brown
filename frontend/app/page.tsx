@@ -4,14 +4,15 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Sidebar from "@/components/Sidebar";
 import ChatWindow from "@/components/ChatWindow";
-import { Session } from "@/lib/types";
+import { Session, Message } from "@/lib/types";
 import { supabase } from "@/lib/supabaseClient";
 
 export default function Home() {
   const router = useRouter();
   const [user, setUser] = useState<string>("Broski");
-  const [sessions, setSessions] = useState<Session[]>([]);
-  const [session, setSession] = useState<Session | null>(null);
+  const [sessionsList, setSessionsList] = useState<Session[]>([]);
+  const [currentSession, setCurrentSession] = useState<Session | null>(null);
+  const [messageHistory, setMessageHistory] = useState<Message[]>([]);
   const [newSession, setNewSession] = useState(false);
   const [loading, setLoading] = useState(true);
 
@@ -34,14 +35,23 @@ export default function Home() {
     <main className="flex h-screen">
       <Sidebar
         user={user}
-        session={session}
-        setSession={setSession}
-        sessions={sessions}
-        setSessions={setSessions}
+        currentSession={currentSession}
+        setCurrentSession={setCurrentSession}
+        messageHistory={messageHistory}
+        setMessageHistory={setMessageHistory}
+        sessionsList={sessionsList}
+        setSessionsList={setSessionsList}
         newSession={newSession}
         setNewSession={setNewSession}
       />
-      <ChatWindow user={user} session={session} setSession={setSession} newSession={newSession} setNewSession={setNewSession}/>
+      <ChatWindow 
+        user={user} 
+        currentSession={currentSession} 
+        setCurrentSession={setCurrentSession} 
+        messageHistory={messageHistory}
+        setMessageHistory={setMessageHistory}
+        newSession={newSession} 
+        setNewSession={setNewSession}/>
     </main>
   );
 }

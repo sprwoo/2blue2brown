@@ -2,7 +2,8 @@ from flask import Blueprint, jsonify, request
 from app.services.supabase import (
     get_chat_session,
     get_all_chat_sessions,
-    get_latest_chat_session
+    get_latest_chat_session,
+    post_chat_session
 )
 
 session_bp = Blueprint("session", __name__)
