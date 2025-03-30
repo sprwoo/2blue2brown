@@ -1,0 +1,10 @@
+*/.venv/
+*/.env
+frontend/.next/
+frontend/node_modules/
+**/venv/
+__pycache__/
+*.pyc
+.venv/
+*/media/
+/backend/app/api/media/
