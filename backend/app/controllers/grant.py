@@ -12,11 +12,10 @@ class Grant():
             api_key=os.getenv("LLM_KEY")
         )
         self.temperature = 0.1
-        self.max_tokens = 100
         
     def code_response(self, prompt):
         response = self.client.chat.completions.create(
-            model="meta-llama/Meta-Llama-3.1-70B-Instruct",
+            model="meta-llama/Meta-Llama-3.1-405B-Instruct",
             messages=[
                 {
                     "role": "user",

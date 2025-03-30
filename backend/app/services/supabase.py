@@ -63,13 +63,16 @@ def get_all_chat_sessions():
 
 def get_chat_histories(session_id):
     try:
-        url = f"{SUPABASE_URL}/rest/v1/chat_messages?chat_session_id=eq.{session_id}&order=time.asc"
+        url = f"{SUPABASE_URL}/rest/v1/chat_messages?chat_session_id=eq.{session_id}&order=time_created.asc"
+        
         headers = {
             'Content-Type': 'application/json',
             'Accept': 'application/json',
             'Accept-Profile': 'chatbotschema',
             'apikey': SUPABASE_ANON_KEY
         }
+
+
         response = requests.get(url, headers=headers)
         if response.status_code == 200:
             return response.json()
