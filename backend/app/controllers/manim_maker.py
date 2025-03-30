@@ -6,12 +6,6 @@ class ManimScriptGenerator:
         self.output_filename = output_filename
 
     def generate_script(self, manim_code: str):
-        """
-        Generates a Python file with the given Manim code.
-
-        Parameters:
-            manim_code (str): A string containing the Manim script code.
-        """
         # Ensure the output directory exists.
         output_dir = os.path.dirname(self.output_filename)
         if not os.path.exists(output_dir):
