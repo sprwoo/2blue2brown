@@ -1,12 +1,13 @@
 "use client";
 
-import { useState, useRef, useEffect, useCallback } from "react";
+import React, { useState, useRef, useEffect, useCallback } from "react";
 import { useDropzone } from "react-dropzone";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { Send, User, Bot, X } from "lucide-react";
 import Image from "next/image";
 import ReactMarkdown from "react-markdown";
+import { Session } from "@/lib/types";
 
 type Message = {
   sender: "user" | "ai";
@@ -18,9 +19,11 @@ type Message = {
 export default function ChatWindow({
   user,
   session,
+  setSession,
 }: {
   user: string;
-  session: string;
+  session: Session | null;
+  setSession: React.Dispatch<React.SetStateAction<Session | null>>;
 }) {
   const [messages, setMessages] = useState<Message[]>([
     {
@@ -38,6 +41,17 @@ export default function ChatWindow({
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [dragActive, setDragActive] = useState(false);
   const scrollRef = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    const fetchLatestSession = async () => {
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/get_latest_session`
+      );
+      const latestSession = await response.json();
+      setSession(latestSession);
+    };
+    fetchLatestSession();
+  }, []);
 
   useEffect(() => {
     scrollRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -94,7 +108,8 @@ export default function ChatWindow({
   return (
     <div className="flex flex-col max-w-[1200px] bg-zinc-950">
       <div className="border-b border-zinc-800 p-4 h-17.25 text-sm font-semibold text-zinc-200">
-        {session}
+        <div>{session?.title}</div>
+        <div>{session?.time_created}</div>
       </div>
       <div className="flex-1 overflow-y-auto px-4 py-6 space-y-6">
         {messages.map((msg, idx) => (

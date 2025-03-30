@@ -2,16 +2,24 @@
 
 import Sidebar from "@/components/Sidebar";
 import ChatWindow from "@/components/ChatWindow";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { Session } from "@/lib/types";
 
 export default function Home() {
   const [user, setUser] = useState<string>("Broski");
-  // we'll change these states later probably
-  const [session, setSession] = useState<string>("Session 1")
+  const [sessions, setSessions] = useState<Session[]>([]);
+  const [session, setSession] = useState<Session | null>(null);
+
   return (
     <main className="flex h-screen">
-      <Sidebar user={user} session={session} setSession={setSession}/>
-      <ChatWindow user={user} session={session} />
+      <Sidebar
+        user={user}
+        session={session}
+        setSession={setSession}
+        sessions={sessions}
+        setSessions={setSessions}
+      />
+      <ChatWindow user={user} session={session} setSession={setSession} />
     </main>
   );
 }

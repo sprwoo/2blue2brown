@@ -59,9 +59,9 @@ def post_test(sender, message):
     except Exception as error:
         return {"error": str(error)}
 
-def get_chat_sessions(uuid):
+def get_chat_session(uuid):
     try:
-        url = f"{SUPABASE_URL}/rest/v1/chat_sessions?title=eq.{uuid}"
+        url = f"{SUPABASE_URL}/rest/v1/chat_sessions?id=eq.{uuid}"
         
         headers = {
             'Content-Type': 'application/json',
@@ -79,6 +79,27 @@ def get_chat_sessions(uuid):
     
     except Exception as error:
         return {"error": str(error)}
+
+def get_all_chat_sessions():
+    try:
+        url = f"{SUPABASE_URL}/rest/v1/chat_sessions?order=time_created.desc"
+
+        headers = {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',
+            'apikey': SUPABASE_ANON_KEY,
+            'Authorization': f'Bearer {SUPABASE_ANON_KEY}',
+            'Accept-Profile': 'chatbotschema'
+        }
+
+        response = requests.get(url, headers=headers)
+        if response.status_code == 200:
+            return response.json()
+        else:
+            return {"error": response.text}
+    except Exception as error:
+        return {"error": str(error)}
+
 
 def get_chat_histories(session_id):
     try:
@@ -128,7 +149,7 @@ def post_message(sender, message):
 
 @app.route("/api", methods=["GET"])
 def home():
-    return jsonify({"message": "Hello from Flask!"})
+    return jsonify({ "message": "Hello from Flask!" })
 
 @app.route("/api/get_test", methods=["GET"])
 def api_get_test():
@@ -145,18 +166,44 @@ def api_post_test():
 
     return jsonify(result)
 
-@app.route("/api/get_chat_sessions", methods=["GET"])
-def route_chat_sessions():
-    uuid = request.args.get("uuid")  # Get the UUID from query params
+@app.route("/api/get_all_chat_sessions", methods=["GET"])
+def route_all_chat_sessions():
+    data = get_all_chat_sessions()
+    return jsonify(data)
+
+@app.route("/api/get_chat_session", methods=["GET"])
+def route_chat_session():
+    uuid = request.args.get("uuid") 
     if not uuid:
         return jsonify({"error": "UUID is required"}), 400
 
-    data = get_chat_sessions(uuid)
-    return jsonify(data)
+    data = get_chat_session(uuid)
+    return jsonify(data[0])
+
+def get_latest_chat_session():
+    try:
+        url = f"{SUPABASE_URL}/rest/v1/chat_sessions?order=time_created.desc&limit=1"
+
+        headers = {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',
+            'apikey': SUPABASE_ANON_KEY,
+            'Authorization': f'Bearer {SUPABASE_ANON_KEY}',
+            'Accept-Profile': 'chatbotschema'
+        }
+
+        response = requests.get(url, headers=headers)
+        if response.status_code == 200:
+            return response.json()
+        else:
+            return {"error": response.text}
+    except Exception as error:
+        return {"error": str(error)}
+
 
 @app.route("/api/get_chat_histories", methods=["GET"])
 def route_chat_histories():
-    session_id = request.args.get("session_id")  # Get the session_id from query params
+    session_id = request.args.get("session_id")  
     if not session_id:
         return jsonify({"error": "Session ID is required"}), 400
 
@@ -175,6 +222,16 @@ def route_send_message():
 
     result = post_message(sender, message)
     return jsonify(result), 200
+
+@app.route("/api/get_latest_session", methods=["GET"])
+def route_latest_chat_session():
+    data = get_latest_chat_session()
+    if isinstance(data, list) and data:
+        return jsonify(data[0])  
+    elif isinstance(data, list):
+        return jsonify({"error": "No sessions found"}), 404
+    else:
+        return jsonify(data) 
 
 if __name__ == "__main__":
     app.run(debug=True, port=5001)
