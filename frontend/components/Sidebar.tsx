@@ -12,13 +12,18 @@ export default function Sidebar({
   setSession,
   sessions,
   setSessions,
+  newSession,
+  setNewSession,
 }: {
   user: string;
   session: Session | null;
   setSession: React.Dispatch<React.SetStateAction<Session | null>>;
   sessions: Session[];
   setSessions: React.Dispatch<React.SetStateAction<Session[]>>;
+  newSession: boolean;
+  setNewSession: React.Dispatch<React.SetStateAction<boolean>>;
 }) {
+
   useEffect(() => {
     const getSessions = async () => {
       const response = await fetch(
@@ -45,7 +50,9 @@ export default function Sidebar({
         <Button
           className="w-full cursor-pointer flex gap-2 bg-zinc-800 text-zinc-100 hover:bg-zinc-700 transition-colors duration-200"
           variant="secondary"
-          // onClick={() => setSession("New session")}
+          onClick={() => {
+            setNewSession(true); // Make a new session
+          }}
         >
           <Plus className="mr-2 h-4 w-4" />
           New Chat

@@ -20,10 +20,14 @@ export default function ChatWindow({
   user,
   session,
   setSession,
+  newSession,
+  setNewSession
 }: {
   user: string;
   session: Session | null;
   setSession: React.Dispatch<React.SetStateAction<Session | null>>;
+  newSession: boolean;
+  setNewSession: React.Dispatch<React.SetStateAction<boolean>>;
 }) {
   const [messages, setMessages] = useState<Message[]>([
     {
@@ -56,6 +60,16 @@ export default function ChatWindow({
   useEffect(() => {
     scrollRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
+
+  useEffect(() => {
+    if (newSession) {
+      setMessages([]);
+      setInput("");
+      setFile(null);
+      setPreviewUrl(null);
+      setNewSession(false);
+    }
+  }, [newSession, setNewSession]);
 
   const onDrop = useCallback((acceptedFiles: File[]) => {
     const droppedFile = acceptedFiles[0];

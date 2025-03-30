@@ -12,6 +12,7 @@ export default function Home() {
   const [user, setUser] = useState<string>("Broski");
   const [sessions, setSessions] = useState<Session[]>([]);
   const [session, setSession] = useState<Session | null>(null);
+  const [newSession, setNewSession] = useState(false);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -37,8 +38,10 @@ export default function Home() {
         setSession={setSession}
         sessions={sessions}
         setSessions={setSessions}
+        newSession={newSession}
+        setNewSession={setNewSession}
       />
-      <ChatWindow user={user} session={session} setSession={setSession} />
+      <ChatWindow user={user} session={session} setSession={setSession} newSession={newSession} setNewSession={setNewSession}/>
     </main>
   );
 }
