@@ -22,31 +22,41 @@ class MainScene(Scene):
 def extract_python_code(text):
     """
     Extracts Python code from the API response.
-    It looks for a code block delimited by triple backticks with an optional 'python' specifier.
-    If no code block is found, it searches for the first occurrence of 'from manim'
-    and returns everything from that point.
+    If a '</think>' tag is present, returns only everything after that tag.
+    Otherwise, tries to extract a code block delimited by triple backticks,
+    or returns everything starting from 'from manim import *'.
     """
+    # Check if '</think>' tag is present and return code after it.
+    if '</think>' in text:
+        index = text.find('</think>') + len('</think>')
+        return text[index:].strip()
+    
     # Try to find a code block using triple backticks and optional 'python'
     code_block_pattern = r"```(?:python)?\s*(.*?)\s*```"
     match = re.search(code_block_pattern, text, re.DOTALL)
     if match:
         return match.group(1).strip()
-    # Fallback: look for the start of valid code.
-    start_index = text.find("from manim")
+    
+    # Fallback: look for the start of valid code starting with 'from manim import *'
+    start_index = text.find("from manim import *")
     if start_index != -1:
         return text[start_index:].strip()
+    
     return text.strip()
 
 def main():
     # Step 1: Get a topic or group of ideas from the user.
     user_topic = input("Enter the topic or ideas for your Manim scene: ")
 
-    # The engineered prompt to ensure the model outputs only valid Manim code.
+    # Revised system prompt: force output of ONLY Manim code, no extra text or tags.
     system_prompt = (
-        "You are an expert in Manim and you must output only valid Python code that defines a complete Manim scene. "
-        "Your output should not include any text, comments, or explanations outside of the code. "
-        "The code must be self-contained and executable as-is, defining a Manim Scene (for example, a class named \"MainScene\") "
-        "that animates something simple like a text greeting. Do not output anything except the Python code."
+        "You are an expert in Manim. Generate only valid, self-contained Python code that defines a complete Manim scene. "
+        "The code must start with 'from manim import *' and include all necessary imports. "
+        "It should define a Manim Scene class named 'MainScene' that demonstrates a neural network with layers, neurons, and connections using VGroup. "
+        "Animate the network's forward pass with LaggedStart, display a loss equation, then animate backpropagation with gradient arrows. "
+        "Include equations for the forward pass, loss, and gradient computation, and animate them as needed. "
+        "Use colors to differentiate phases and add labels with text objects. "
+        "Do not output any extra text, markdown formatting, or tags—output only the code."
     )
 
     # Retrieve your API key from the environment variable set in the .env file.
@@ -83,6 +93,8 @@ def main():
     try:
         raw_response = response.choices[0].message.content
         manim_code = extract_python_code(raw_response)
+        # Replace any undefined reference to 'output_animation' with 'output_activation'
+        manim_code = manim_code.replace("output_animation", "output_activation")
     except (AttributeError, KeyError, IndexError) as e:
         print("API response did not contain the expected code, using demo scene code instead.")
         manim_code = DEMO_SCENE_CODE
@@ -98,8 +110,8 @@ def main():
         sys.exit(1)
     
     # Step 5: Use Manim to render the scene.
-    # Assumes that the generated code defines a scene class named "MainScene".
-    command = ["manim", "-p", "-ql", code_filename, "MainScene"]
+    # Running Manim as a module via the current Python interpreter to ensure the correct environment is used.
+    command = [sys.executable, "-m", "manim", "-p", "-ql", code_filename, "MainScene"]
     try:
         subprocess.run(command, check=True)
         print("Animation rendering complete. Check the media folder for the .mp4 output.")
