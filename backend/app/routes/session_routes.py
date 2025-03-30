@@ -16,7 +16,6 @@ def route_chat_session():
     uuid = request.args.get("uuid")
     if not uuid:
         return jsonify({"error": "UUID is required"}), 400
-
     data = get_chat_session(uuid)
     return jsonify(data[0]) if isinstance(data, list) and data else jsonify({"error": "Session not found"}), 404
 

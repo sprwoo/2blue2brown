@@ -78,6 +78,16 @@ export default function ChatWindow({
     onDragLeave: () => setDragActive(false),
   });
 
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const handleFileSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const selectedFile = event.target.files?.[0];
+    if (!selectedFile) return;
+
+    setFile(selectedFile);
+    setPreviewUrl(URL.createObjectURL(selectedFile));
+  };
+
   const handleSend = () => {
     if (!input.trim() && !file) return;
 
@@ -219,6 +229,47 @@ export default function ChatWindow({
               }
             }}
           />
+          <input
+            type="file"
+            ref={fileInputRef}
+            accept="image/*,application/pdf"
+            onChange={handleFileSelect}
+            className="hidden"
+          />
+
+          <Button
+            className="h-[62px] cursor-pointer px-4"
+            onClick={() => fileInputRef.current?.click()}
+          >
+            Choose File
+          </Button>
+          <Button
+            className="h-[62px] cursor-pointer px-4"
+            onClick={async () => {
+              if (!file) return;
+
+              const formData = new FormData();
+              formData.append("image", file);
+
+              try {
+                const response = await fetch(
+                  `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/upload_image`,
+                  {
+                    method: "POST",
+                    body: formData,
+                  }
+                );
+
+                const result = await response.json();
+                console.log("Upload response:", result);
+              } catch (error) {
+                console.error("Upload failed:", error);
+              }
+            }}
+          >
+            Upload
+          </Button>
+
           <Button onClick={handleSend} className="h-[62px] cursor-pointer px-4">
             <Send className="h-4 w-4" />
           </Button>
