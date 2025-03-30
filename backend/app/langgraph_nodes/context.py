@@ -1,4 +1,4 @@
-from run import get_chat_histories
+from app.services import get_chat_histories
 from app.controllers import Chunky
 
 def load_context(state):
