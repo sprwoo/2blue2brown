@@ -10,8 +10,4 @@ def create_app():
 
     CORS(app, resources={r"/api/*": {"origins": ["http://localhost:3000"]}}, supports_credentials=True)
 
-    # OR apply CORS directly to each blueprint (often more reliable)
-    # CORS(chat_bp, origins=["http://localhost:3000"])
-    # CORS(session_bp, origins=["http://localhost:3000"])
-
     return app
