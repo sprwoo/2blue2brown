@@ -1,9 +1,9 @@
 from flask import Blueprint, jsonify, request
-from app.services.supabase import get_chat_session, get_all_chat_sessions, get_latest_chat_session
+from app.services.supabase import *
 
 session_bp = Blueprint("session", __name__)
 
-@session_bp.route("/asd", methods=["GET"])
+@session_bp.route("/", methods=["GET"])
 def index():
     return jsonify({"message": "Welcome to the Chatbot API!"})
 
@@ -18,7 +18,9 @@ def route_chat_session():
 
 @session_bp.route("/get_all_chat_sessions", methods=["GET"])
 def route_all_chat_sessions():
-    data = get_all_chat_sessions()
+    uuid = request.args.get("uuid") 
+
+    data = get_all_chat_sessions(uuid)
     return jsonify(data)
 
 @session_bp.route("/get_latest_session", methods=["GET"])
@@ -30,3 +32,18 @@ def route_latest_chat_session():
         return jsonify({"error": "No sessions found"}), 404
     else:
         return jsonify(data)
+    
+@session_bp.route("/post_chat_session", methods=["POST"])
+def route_post_chat_session():
+    data = request.json
+
+    # We need the user_id, so update this as soon as we figure out user_id
+    # user_id = data.get('user_id', 'NULL')
+    session_title = data.get('session_title', 'NULL')
+
+    # if user_id == 'NULL':
+    #     return jsonify({"error": "User ID is required"}), 400
+
+    # result = post_chat_session(user_id, session_title)
+    result = post_chat_session(session_title)
+    return jsonify(result), 200
