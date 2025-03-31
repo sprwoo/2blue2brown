@@ -1,3 +1,4 @@
+# app/controllers/combiner.py
 import os
 
 class CombinedCodeGenerator:
@@ -7,6 +8,10 @@ class CombinedCodeGenerator:
     def generate_combined_code(self):
         import_lines = set()
         code_blocks = []
+
+        # Ensure required imports are added.
+        import_lines.add("from manim import *")
+        import_lines.add("import numpy as np")  # Added to allow np.arange
 
         for code in self.code_strings:
             lines = code.splitlines()
@@ -18,10 +23,13 @@ class CombinedCodeGenerator:
                     block.append(line)
             code_blocks.append("\n".join(block).strip())
 
-        # Combine unique import lines at the top
+        # Combine unique import lines at the top.
         combined = "\n".join(sorted(import_lines)) + "\n\n"
-        # Append each code block separated by two newlines
+        # Append each code block separated by two newlines.
         combined += "\n\n".join(code_blocks)
+        
+        # Fix problematic range() calls by replacing them with np.arange()
+        combined = combined.replace("range(-1.5, 2, 1)", "np.arange(-1.5, 2, 1)")
         return combined
 
     def save_to_file(self, folder="generated_manim", filename="manim.py"):
