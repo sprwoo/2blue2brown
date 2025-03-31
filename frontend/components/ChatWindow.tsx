@@ -8,7 +8,6 @@ import { Send, User, Bot, X } from "lucide-react";
 import Image from "next/image";
 import ReactMarkdown from "react-markdown";
 import { Session, Message } from "@/lib/types";
-import { send } from "process";
 
 const sendMessageToBackend = async (message: Message): Promise<void> => {
   console.log("Sending message to backend...");
@@ -49,8 +48,8 @@ export default function ChatWindow({
   messageHistory,
   setMessageHistory,
   newSession,
-  setNewSession
-}: {  
+  setNewSession,
+}: {
   user: string;
   currentSession: Session | null;
   setCurrentSession: React.Dispatch<React.SetStateAction<Session | null>>;
@@ -152,7 +151,7 @@ export default function ChatWindow({
         file && file.type.startsWith("image/") ? previewUrl! : undefined,
       time_created: new Date().toISOString(),
     };
-  
+
     setMessageHistory((prev) => [...prev, newMessage]);
     setInput("");
     setFile(null);
@@ -164,13 +163,11 @@ export default function ChatWindow({
       sender: "ai",
       message: "hey fuck you",
       time_created: new Date().toISOString(),
-    }
+    };
 
     console.log("history", messageHistory);
     setTimeout(() => {
-      setMessageHistory((prev) => [
-        ...prev, aiResponse
-      ]);
+      setMessageHistory((prev) => [...prev, aiResponse]);
     }, 1000);
 
     sendMessageToBackend(newMessage);
@@ -185,53 +182,54 @@ export default function ChatWindow({
       <div className="flex-1 overflow-y-auto px-4 py-6 space-y-6">
         {messageHistory.map((msg, idx) => {
           return (
-          <div key={idx} className="flex items-start gap-4 w-full">
-            <div className="mt-1">
-              {msg.sender === "user" ? (
-                <User className="h-5 w-5 text-zinc-400" />
-              ) : (
-                <Bot className="h-5 w-5 text-green-400" />
-              )}
-            </div>
-            <div
-              className={`flex-1 px-4 py-3 text-[15px] leading-relaxed break-words rounded overflow-x-hidden ${
-                msg.sender === "user"
-                  ? "bg-zinc-800 text-zinc-100"
-                  : "bg-zinc-900 text-zinc-100"
-              }`}
-            >
-              <ReactMarkdown
-                components={{
-                  p: ({ node, ...props }) => (
-                    <p className="prose prose-invert max-w-none" {...props} />
-                  ),
-                }}
+            <div key={idx} className="flex items-start gap-4 w-full">
+              <div className="mt-1">
+                {msg.sender === "user" ? (
+                  <User className="h-5 w-5 text-zinc-400" />
+                ) : (
+                  <Bot className="h-5 w-5 text-green-400" />
+                )}
+              </div>
+              <div
+                className={`flex-1 px-4 py-3 text-[15px] leading-relaxed break-words rounded overflow-x-hidden ${
+                  msg.sender === "user"
+                    ? "bg-zinc-800 text-zinc-100"
+                    : "bg-zinc-900 text-zinc-100"
+                }`}
               >
-                {msg.message}
-              </ReactMarkdown>
+                <ReactMarkdown
+                  components={{
+                    p: ({ node, ...props }) => (
+                      <p className="prose prose-invert max-w-none" {...props} />
+                    ),
+                  }}
+                >
+                  {msg.message}
+                </ReactMarkdown>
 
-              {msg.imageUrl && (
-                <div className="mt-3">
-                  <Image
-                    src={msg.imageUrl}
-                    alt="Uploaded"
-                    width={200}
-                    height={200}
-                    className="rounded-md"
-                  />
-                </div>
-              )}
-
-              {msg.file &&
-                msg.file.type === "application/pdf" &&
-                !msg.imageUrl && (
-                  <div className="mt-3 text-sm text-blue-400 underline">
-                    {msg.file.name}
+                {msg.imageUrl && (
+                  <div className="mt-3">
+                    <Image
+                      src={msg.imageUrl}
+                      alt="Uploaded"
+                      width={200}
+                      height={200}
+                      className="rounded-md"
+                    />
                   </div>
                 )}
+
+                {msg.file &&
+                  msg.file.type === "application/pdf" &&
+                  !msg.imageUrl && (
+                    <div className="mt-3 text-sm text-blue-400 underline">
+                      {msg.file.name}
+                    </div>
+                  )}
+              </div>
             </div>
-          </div>
-        )})}
+          );
+        })}
         <div ref={scrollRef} />
       </div>
 
@@ -312,8 +310,11 @@ export default function ChatWindow({
 
               const formData = new FormData();
               formData.append("image", file);
-              formData.append("session_id", "1828e6f9-707d-4d04-b5e5-5d036698b9d6")
-              formData.append("user_input", input)
+              formData.append(
+                "session_id",
+                "1828e6f9-707d-4d04-b5e5-5d036698b9d6"
+              );
+              formData.append("user_input", input);
 
               try {
                 const response = await fetch(
