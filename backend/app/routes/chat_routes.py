@@ -36,7 +36,6 @@ def route_chat_histories():
 @chat_bp.route("/chat", methods=["POST"])
 def handle_chat():
     from app.controllers import build_graph
-    sender = request.form.get("sender")
     user_input = request.form.get("user_input")
     session_id = request.form.get("session_id")
 
@@ -44,6 +43,8 @@ def handle_chat():
     print("user_input:", user_input)
 
     image_summary = None
+    image_url = None
+    
     if "image" in request.files:
         image_file = request.files["image"]
         if image_file.filename != "":
@@ -52,6 +53,21 @@ def handle_chat():
             encoded_image = base64.b64encode(file_bytes).decode('utf-8')
             image_summary = chunky.advanced_image_handling(user_input, encoded_image)
             user_input += f"\n\nThe user also uploaded an image with these contents:\n\n{image_summary}"
+            
+            # Save the image to a temporary location
+            temp_dir = "/tmp"
+            temp_path = os.path.join(temp_dir, image_file.filename)
+            with open(temp_path, "wb") as temp_file:
+                temp_file.write(file_bytes)
+                
+            # Upload the image to Supabase
+            storage = SupabaseStorage()
+            try:
+               image_url = storage.upload_file(temp_path)
+            except Exception as e:
+               print("Error uploading image:", e)
+               image_url = None
+            
 
     graph = build_graph()
     state = {
@@ -59,12 +75,19 @@ def handle_chat():
         "session_id": session_id,
     }
     result = graph.invoke(state)
-
-    post_message("user", user_input, session_id)
-
-    ai_response = result.get("chat_response")
+    chat_session_id = session_id
     manim_code = "\n".join(result.get("code_chunks", [])) or None
-    post_status = post_message("ai", ai_response, session_id, manim_code=manim_code, image_summary=image_summary)
+
+    # Save the user message
+    post_status = post_message("user", user_input, chat_session_id, image_url=image_url)
+
+    ai_message = result.get("chat_response")
+    post_status = post_message(
+       "ai",
+       ai_message,
+       chat_session_id,
+       manim_code=manim_code,
+       image_summary=image_summary,
+    )
 
     return jsonify(post_status), 200
-
