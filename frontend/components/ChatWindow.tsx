@@ -277,7 +277,7 @@ export default function ChatWindow({
 
               const formData = new FormData();
               formData.append("image", file);
-              formData.append("session_id", "Session 1")
+              formData.append("session_id", "1828e6f9-707d-4d04-b5e5-5d036698b9d6")
               formData.append("user_input", input)
 
               try {
