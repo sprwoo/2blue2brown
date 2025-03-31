@@ -1,4 +1,4 @@
-from app.controllers import Grant
+from app.controllers.grant import Grant
 import asyncio
 
 async def run_clip_agent(index, scene, grant_instance):

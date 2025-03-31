@@ -1,4 +1,4 @@
-from app.controllers import Chunky
+from app.controllers.chunky import Chunky
 
 def chat_response(state):
     user_input = state.get("user_input")

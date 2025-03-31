@@ -1,4 +1,4 @@
-from app.controllers import Chunky
+from app.controllers.chunky import Chunky
 import json
 
 def should_generate_video(state):

@@ -1,7 +1,11 @@
-from app.services import get_chat_histories
-from app.controllers import Chunky
+# app/langgraph_nodes/context.py
 
-# session id: 1828e6f9-707d-4d04-b5e5-5d036698b9d6
+from app.controllers.chunky import Chunky
+
+# Stub for database integration; replace with actual implementation as needed.
+def get_chat_histories(session_id):
+    # For now, return an empty list to simulate no chat history.
+    return []
 
 def load_context(state):
     session_id = state.get("session_id")
@@ -16,7 +20,7 @@ def load_context(state):
         print("Error fetching chat history:", messages)
         return {"chat_history": [], "chat_summary": ""}
     
-    # assuming for now, the messages are just texts and not images and code for now
+    # Assuming for now that the messages are just texts (no images/code)
     cleaned = [{"role": msg["sender"], "content": msg["message"]} for msg in messages]
     print("Cleaned chat history:", cleaned)
     
@@ -26,7 +30,7 @@ def load_context(state):
     conversation_text = "\n".join([f"{m['role']}: {m['content']}" for m in recent_msgs])
     prompt = (
         "Based on the following conversation texts, provide a summary of the conversation. Go through each message given by the ai and user and summarize each interaction, responding only in a json and nothing else like this: "
-        "[{'sender': <ai or user>, 'interaction': <summary of their response>}, {'sender': <ai or user>, 'interaction': <summary of their response>}, ...]"
+        "[{'sender': <ai or user>, 'interaction': <summary of their response>}, {'sender': <ai or user>, 'interaction': <summary of their response>}, ...] "
         f": \n\n{conversation_text}"
     )
     
