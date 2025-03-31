@@ -81,9 +81,13 @@ def handle_chat():
     manim_code = "\n".join(result.get("code_chunks", [])) or None
     
     if manim_code:
+        print(1)
         combiner = CombinedCodeGenerator(result.get("code_chunks"))
+        print(2)
         combined_file = combiner.save_to_file(folder="generated_manin", filename='manim.py')
+        print(3)
         print(f"Combined Manim script to saved to: {combined_file}")
+        print(4)
         
         video_maker = VideoMaker(
             script_file=combined_file,
@@ -91,20 +95,34 @@ def handle_chat():
             quality='l',
             preview=False
         )
+
+        print(5)
+
         video_maker.render_video()
+        print(6)
+
         print("Video rendering complete. Check the media folder for the output MP4.")
+        print(7)
+
         video_file = os.path.join("media", "videos", "manim", "480p15", "BloombergPipeline.mp4")
+        print(8)
+
         storage = SupabaseStorage()
+        print(9)
+
         try:
             video_url = storage.upload_file(video_file)
         except Exception as e:
             print("Error uploading video: ", e)
             video_url = None
+        print(10)
 
     # Save the user message
     post_status = post_message("user", user_input, chat_session_id, image_url=image_url)
+    print(11)
 
     ai_message = result.get("chat_response")
+    print(12)
     post_status = post_message(
        "ai",
        ai_message,
@@ -113,5 +131,7 @@ def handle_chat():
        image_summary=image_summary,
        video_url=video_url
     )
+
+    print(13)
 
     return jsonify(post_status), 200
