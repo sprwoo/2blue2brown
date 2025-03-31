@@ -8,6 +8,39 @@ import { Send, User, Bot, X } from "lucide-react";
 import Image from "next/image";
 import ReactMarkdown from "react-markdown";
 import { Session, Message } from "@/lib/types";
+import { send } from "process";
+
+const sendMessageToBackend = async (message: Message): Promise<void> => {
+  console.log("Sending message to backend...");
+  const formData = new FormData();
+  // formData.append("session_id", message.session_id || "Session 1");
+  // formData.append("user_input", message.message || "");
+  formData.append("session_id", message.session_id || "NULL");
+  formData.append("sender", message.sender || "user");
+  formData.append("user_input", message.message || "");
+  formData.append("image_url", message.imageUrl || "");
+  formData.append("time_created", message.time_created || "");
+  formData.append("image_summary", message.imageSummary || "");
+
+  if (message.file) {
+    formData.append("file", message.file);
+  }
+
+  try {
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/chat`,
+      {
+        method: "POST",
+        body: formData,
+      }
+    );
+
+    const result = await response.json();
+    console.log("Upload response:", result);
+  } catch (error) {
+    console.error("Upload failed:", error);
+  }
+};
 
 export default function ChatWindow({
   user,
@@ -125,20 +158,22 @@ export default function ChatWindow({
     setFile(null);
     setPreviewUrl(null);
 
+    const aiResponse: Message = {
+      id: null,
+      session_id: currentSession?.id || null,
+      sender: "ai",
+      message: "hey fuck you",
+      time_created: new Date().toISOString(),
+    }
+
     console.log("history", messageHistory);
     setTimeout(() => {
       setMessageHistory((prev) => [
-        ...prev,
-        {
-          id: null,
-          session_id: currentSession?.id || null,
-          sender: "ai",
-          message:
-            "Here's what I found based on your upload:\n\n### Steps to Solve Quadratic\n\n1. Rearrange the equation\n2. Factor if possible\n3. Apply the quadratic formula\n\nLet me know if you'd like a deeper explanation!",
-          time_created: new Date().toISOString(),
-        },
+        ...prev, aiResponse
       ]);
     }, 1000);
+
+    sendMessageToBackend(newMessage);
   };
 
   return (

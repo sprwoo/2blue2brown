@@ -10,7 +10,8 @@ export interface Message {
     session_id: string | null;
     sender: "user" | "ai";
     message: string | null;
-    file?: File | null;
     imageUrl?: string | null;
+    file?: File | null;
     time_created: string | null;
+    imageSummary?: string | null;
 }
