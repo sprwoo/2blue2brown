@@ -36,6 +36,8 @@ def route_chat_histories():
 @chat_bp.route("/chat", methods=["POST"])
 def handle_chat():
     from app.controllers import build_graph
+    from app.controllers.combiner import CombinedCodeGenerator
+    from app.controllers.video_maker import VideoMaker
     user_input = request.form.get("user_input")
     session_id = request.form.get("session_id")
 
@@ -77,6 +79,27 @@ def handle_chat():
     result = graph.invoke(state)
     chat_session_id = session_id
     manim_code = "\n".join(result.get("code_chunks", [])) or None
+    
+    if manim_code:
+        combiner = CombinedCodeGenerator(result.get("code_chunks"))
+        combined_file = combiner.save_to_file(folder="generated_manin", filename='manim.py')
+        print(f"Combined Manim script to saved to: {combined_file}")
+        
+        video_maker = VideoMaker(
+            script_file=combined_file,
+            scene_name="BloombergPipeline",
+            quality='l',
+            preview=False
+        )
+        video_maker.render_video()
+        print("Video rendering complete. Check the media folder for the output MP4.")
+        video_file = os.path.join("media", "videos", "manim", "480p15", "BloombergPipeline.mp4")
+        storage = SupabaseStorage()
+        try:
+            video_url = storage.upload_file(video_file)
+        except Exception as e:
+            print("Error uploading video: ", e)
+            video_url = None
 
     # Save the user message
     post_status = post_message("user", user_input, chat_session_id, image_url=image_url)
@@ -88,6 +111,7 @@ def handle_chat():
        chat_session_id,
        manim_code=manim_code,
        image_summary=image_summary,
+       video_url=video_url
     )
 
     return jsonify(post_status), 200
