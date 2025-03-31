@@ -78,7 +78,7 @@ def handle_chat():
     result = graph.invoke(state)
     
     # Save the user message
-    post_status = post_message("user", user_input, chat_session_id)
+    post_status = post_message("user", user_input, chat_session_id, image_url=image_url)
     
     # Save the AI message along with any code, image summary, and image_url
     ai_message = result.get("chat_response")
@@ -89,7 +89,6 @@ def handle_chat():
         chat_session_id, 
         manim_code=manim_code, 
         image_summary=image_summary,
-        image_url=image_url
     )
     
     return jsonify(post_status), 200
