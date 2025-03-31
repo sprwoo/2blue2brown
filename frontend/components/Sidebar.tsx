@@ -27,7 +27,6 @@ export default function Sidebar({
   newSession: boolean;
   setNewSession: React.Dispatch<React.SetStateAction<boolean>>;
 }) {
-
   useEffect(() => {
     const getSessions = async () => {
       const response = await fetch(
@@ -73,18 +72,19 @@ export default function Sidebar({
       </div>
       <ScrollArea className="flex-1">
         <div className="p-4 space-y-2">
-          {sessionsList.length > 0 && sessionsList?.map((session, index) => (
-            <div
-              key={`${session.id}-${index}`}
-              className="p-3 rounded-lg bg-zinc-800 hover:bg-zinc-700 cursor-pointer"
-              onClick={() => handleSession(session.id)}
-            >
-              <div className="text-sm font-medium">{session.title}</div>
-              <div className="text-xs text-zinc-400">
-                {session.time_created}
+          {sessionsList.length > 0 &&
+            sessionsList?.map((session, index) => (
+              <div
+                key={`${session.id}-${index}`}
+                className="p-3 rounded-lg bg-zinc-800 hover:bg-zinc-700 cursor-pointer"
+                onClick={() => setCurrentSession(session)}
+              >
+                <div className="text-sm font-medium">{session.title}</div>
+                <div className="text-xs text-zinc-400">
+                  {session.time_created}
+                </div>
               </div>
-            </div>
-          ))}
+            ))}
         </div>
       </ScrollArea>
     </div>
