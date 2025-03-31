@@ -6,7 +6,7 @@ async def run_clip_agent(index, scene, grant_instance):
         "You are an expert code animator creating a single Manim (Python) scene\n\n"
         f"Use the following scene description and script to generate the code:\n\n"
         f"Scene Description:\n{scene['scene_description']}\n"
-        "❗Important:\n"
+        "Important Criteria:\n"
         "- Output **only** the complete Python code as plain text. Do NOT include any explanations, comments, or markdown (no ```python).\n"
         "- Do NOT include phrases like 'Here is the code:' or 'This code creates...'.\n"
         "- Your output will be compiled directly, so it must be a standalone, valid Python script using the Manim library.\n"
