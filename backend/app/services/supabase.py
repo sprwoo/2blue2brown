@@ -1,6 +1,9 @@
 import os
 import requests
 from dotenv import load_dotenv
+import json
+from datetime import datetime
+import uuid
 
 load_dotenv()
 
@@ -10,6 +13,7 @@ SUPABASE_ANON_KEY = os.getenv('supakey')
 def get_chat_session(uuid):
     try:
         url = f"{SUPABASE_URL}/rest/v1/chat_sessions?id=eq.{uuid}"
+        print(url)
         headers = {
             'Content-Type': 'application/json',
             'Accept': 'application/json',
@@ -88,14 +92,28 @@ def post_chat_session(session_title):
             'Content-Type': 'application/json',
             'Accept': 'application/json',
             'Content-Profile': 'chatbotschema',
-            'apikey': SUPABASE_ANON_KEY
+            'apikey': SUPABASE_ANON_KEY,
+            "Authorization": f"Bearer {SUPABASE_ANON_KEY}"
         }
-        data = {"title": session_title}
-        response = requests.post(url, headers=headers, json=data)
+        data = {
+            "id" : str(uuid.uuid4()),
+            "user_id": None,
+            "title": session_title,
+            "time_created": datetime.now().isoformat(),
+        }
+        json_data = json.dumps(data)  
+        response = requests.post(url, headers=headers, data=json_data, params={"select": "id"})
+        print("Response Content:", response.text)
+
         if response.status_code == 201:
-            return {"success": "Session created successfully!", "data": response.json()}
+            # If the session is created successfully, extract and return the 'id'
+            session_data = response.json()
+            session_id = session_data[0]['id']  # Assuming response contains a list with the created session
+            return {"success": "Session created successfully!", "session_id": session_id}
         else:
+            # If there is an error, return the error message
             return {"error": response.text}
+
     except Exception as error:
         return {"error": str(error)}
 

@@ -27,8 +27,8 @@ def route_chat_histories():
 
     try:
         result = get_chat_histories(chat_session_id)
-        for row in result:
-            print(row)
+        # for row in result:
+        #     print(row)
         return jsonify(result), 200
     except Exception as e:
         return jsonify({"error": str(e)}), 500

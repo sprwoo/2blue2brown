@@ -18,7 +18,8 @@ def route_chat_session():
     if not uuid:
         return jsonify({"error": "UUID is required"}), 400
     data = get_chat_session(uuid)
-    return jsonify(data[0]) if isinstance(data, list) and data else jsonify({"error": "Session not found"}), 404
+    
+    return jsonify(data), 200
 
 @session_bp.route("/get_all_chat_sessions", methods=["GET"])
 def route_all_chat_sessions():
@@ -38,14 +39,18 @@ def route_latest_chat_session():
 @session_bp.route("/post_chat_session", methods=["POST"])
 def route_post_chat_session():
     data = request.json
-
+    print("Data received:", data)
     # We need the user_id, so update this as soon as we figure out user_id
     # user_id = data.get('user_id', 'NULL')
-    session_title = data.get('session_title', 'NULL')
+    session_title = data.get('title', 'NULL')
+    session_id = data.get('session_id', 'NULL')
 
     # if user_id == 'NULL':
     #     return jsonify({"error": "User ID is required"}), 400
 
     # result = post_chat_session(user_id, session_title)
     result = post_chat_session(session_title)
+
+    print("---------------------")
+    print(result)
     return jsonify(result), 200
