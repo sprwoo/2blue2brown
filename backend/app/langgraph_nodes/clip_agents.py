@@ -3,16 +3,16 @@ import asyncio
 
 async def run_clip_agent(index, scene, grant_instance):
     prompt = (
-        "You are an expert code animator creating a single Manim (Python) scene in the style of 3Blue1Brown.\n\n"
-        f"Use the following scene description and subtitle to generate the code:\n\n"
+        "You are an expert code animator creating a single Manim (Python) scene\n\n"
+        f"Use the following scene description and script to generate the code:\n\n"
         f"Scene Description:\n{scene['scene_description']}\n"
-        f"Subtitle:\n\"{scene['subtitle_script']}\"\n\n"
         "❗Important:\n"
         "- Output **only** the complete Python code as plain text. Do NOT include any explanations, comments, or markdown (no ```python).\n"
         "- Do NOT include phrases like 'Here is the code:' or 'This code creates...'.\n"
         "- Your output will be compiled directly, so it must be a standalone, valid Python script using the Manim library.\n"
         "- Use a single Scene class with the name `LSTMScene`.\n"
         "- The subtitle must appear on screen using a `Text` object.\n\n"
+        "- Your code should not have any overlapping elements, and all graphics should be legible. Clear any pre-existing elements before adding new ones. \n\n"
         "Begin your output now:"
     )
 
