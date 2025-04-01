@@ -8,6 +8,7 @@ import base64
 from .blawb import SupabaseStorage
 
 chat_bp = Blueprint("chat", __name__)
+
 @chat_bp.route("/create_new_session", methods=["POST"])
 def route_send_message():
     result = create_new_session()
@@ -21,11 +22,32 @@ def route_chat_histories():
 
     try:
         result = get_chat_histories(chat_session_id)
-        # for row in result:
-        #     print(row)
         return jsonify(result), 200
     except Exception as e:
         return jsonify({"error": str(e)}), 500
+
+
+@chat_bp.route("/get_chat", methods=["GET"])
+def get_chat():
+    chat_session_id = request.args.get("chat_session_id")
+    if not chat_session_id:
+        return jsonify({"error": "Missing chat_session_id parameter"}), 400
+
+    try:
+        chat_history = get_chat_histories(chat_session_id)
+        ai_messages = [msg for msg in chat_history if msg.get("role") == "ai"]
+        if not ai_messages:
+            return jsonify({"error": "No generated result found for this session"}), 404
+
+        latest_ai_message = ai_messages[-1]
+        result = {
+            "chat_response": latest_ai_message.get("message"),
+            "video": latest_ai_message.get("video_url")
+        }
+        return jsonify(result), 200
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+    
 
 @chat_bp.route("/chat", methods=["POST"])
 def handle_chat():
@@ -40,7 +62,7 @@ def handle_chat():
 
     image_summary = None
     image_url = None
-    
+
     if "image" in request.files:
         image_file = request.files["image"]
         if image_file.filename != "":
@@ -59,11 +81,10 @@ def handle_chat():
             # Upload the image to Supabase
             storage = SupabaseStorage()
             try:
-               image_url = storage.upload_file(temp_path)
+                image_url = storage.upload_file(temp_path)
             except Exception as e:
-               print("Error uploading image:", e)
-               image_url = None
-            
+                print("Error uploading image:", e)
+                image_url = None
 
     graph = build_graph()
     state = {
@@ -99,13 +120,16 @@ def handle_chat():
 
         path = os.path.join(os.getcwd(), "media", "videos", "manim", "480p15")
         if os.path.exists(path):
-            os.rename(os.path.join(path, "LSTMScene.mp4"), os.path.join(path, f"LSTMScene{datetime.now().strftime("%Y-%m-%d_%H-%M-%S")}.mp4"))
+            os.rename(
+                os.path.join(path, "LSTMScene.mp4"),
+                os.path.join(path, f"LSTMScene{datetime.now().strftime('%Y-%m-%d_%H-%M-%S')}.mp4")
+            )
         else:
             print("Path does not exist:", path)
         print("Video rendering complete. Check the media folder for the output MP4.")
         print(7)
 
-        video_file = os.path.join(path, f"LSTMScene{datetime.now().strftime("%Y-%m-%d_%H-%M-%S")}.mp4")
+        video_file = os.path.join(path, f"LSTMScene{datetime.now().strftime('%Y-%m-%d_%H-%M-%S')}.mp4")
         print(8)
 
         storage = SupabaseStorage()
@@ -127,12 +151,12 @@ def handle_chat():
     print(12)
     
     post_status = post_message(
-       "ai",
-       ai_message,
-       chat_session_id,
-       manim_code=manim_code,
-       image_summary=image_summary,
-       video_url=video_url
+        "ai",
+        ai_message,
+        chat_session_id,
+        manim_code=manim_code,
+        image_summary=image_summary,
+        video_url=video_url
     )
 
     print(13)
