@@ -98,7 +98,7 @@ def handle_chat():
         print("Video rendering complete. Check the media folder for the output MP4.")
         print(7)
 
-        video_file = os.path.join("media", "videos", "manim", "480p15", "LSTMScene.mp4")
+        video_file = os.path.join("media", "videos", "manim", "480p15", "qdws.mp4")
         print(8)
 
         storage = SupabaseStorage()
