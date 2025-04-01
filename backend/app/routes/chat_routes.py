@@ -106,6 +106,7 @@ def handle_chat():
         print(9)
 
         try:
+            print("Uploading video... named: ", video_file)
             video_url = storage.upload_file(video_file)
         except Exception as e:
             print("Error uploading video: ", e)

@@ -60,7 +60,7 @@ def main():
         # Render the video using VideoMaker.
         video_maker = VideoMaker(
             script_file=combined_file,
-            scene_name="LSTMScene",  # The generated code defines a class called LSTMScene.
+            scene_name=f"LSTMScene{int(time.time())}",  # The generated code defines a class called LSTMScene.
             quality="l",             # Use 'l' (low) quality flag.
             preview=False
         )
