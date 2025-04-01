@@ -2,6 +2,8 @@
 
 import subprocess
 import sys
+import os
+from datetime import datetime
 
 class VideoMaker:
     def __init__(self, script_file, scene_name="MainScene", quality="l", preview=True):
@@ -33,6 +35,7 @@ class VideoMaker:
         try:
             subprocess.run(command, check=True)
             print("Animation rendering complete. Check the media folder for the .mp4 output.")
+
         except subprocess.CalledProcessError as e:
             print("Error during Manim rendering:", e)
             sys.exit(1)

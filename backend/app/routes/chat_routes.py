@@ -1,3 +1,4 @@
+from datetime import datetime
 from flask import Blueprint, jsonify, request
 from app.services.supabase import post_message, get_chat_histories, create_new_session
 from app.controllers import Chunky, build_graph
@@ -96,10 +97,15 @@ def handle_chat():
         video_maker.render_video()
         print(6)
 
+        path = os.path.join(os.getcwd(), "media", "videos", "manim", "480p15")
+        if os.path.exists(path):
+            os.rename(os.path.join(path, "LSTMScene.mp4"), os.path.join(path, f"LSTMScene{datetime.now().strftime("%Y-%m-%d_%H-%M-%S")}.mp4"))
+        else:
+            print("Path does not exist:", path)
         print("Video rendering complete. Check the media folder for the output MP4.")
         print(7)
 
-        video_file = os.path.join("media", "videos", "manim", "480p15", f"qdws{int(time.time())}.mp4")
+        video_file = os.path.join(path, f"LSTMScene{datetime.now().strftime("%Y-%m-%d_%H-%M-%S")}.mp4")
         print(8)
 
         storage = SupabaseStorage()
@@ -107,7 +113,7 @@ def handle_chat():
 
         try:
             print("Uploading video... named: ", video_file)
-            video_url = storage.upload_file(video_file_path, file_name=f"qdws{int(time.time())}.mp4")
+            video_url = storage.upload_file(video_file, file_name=f"qdws{int(time.time())}.mp4")
         except Exception as e:
             print("Error uploading video: ", e)
             video_url = None

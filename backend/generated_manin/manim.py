@@ -3,195 +3,125 @@ import numpy as np
 
 class LSTMScene(Scene):
     def construct(self):
-        subtitle = Text("Defining a vector in 2D space", font_size=36)
-        subtitle.to_edge(DOWN)
+        subtitle = Text("Defining a right triangle", font_size=36)
+        subtitle.to_edge(UP)
         self.add(subtitle)
 
-        axes = Axes(
-            x_range=[-4, 4, 1],
-            y_range=[-4, 4, 1],
-            x_length=8,
-            y_length=6,
-            axis_config={"include_tip": True},
+        triangle = VGroup(
+            Line(ORIGIN, RIGHT * 3, stroke_width=0.1),
+            Line(ORIGIN, UP * 4, stroke_width=0.1),
+            Line(RIGHT * 3, UP * 4, stroke_width=0.1)
         )
-        self.play(Create(axes), run_time=2)
-
-        vector = Line(ORIGIN, [2, 2, 0], stroke_color=RED)
-        self.play(Create(vector), run_time=2)
-
-        vector_label = Text("Vector", font_size=24)
-        vector_label.next_to(vector, UP, buff=0.5)
-        self.play(Write(vector_label), run_time=1)
-
-        self.wait(3)
+        a = Text("a").next_to(triangle[0], DOWN)
+        b = Text("b").next_to(triangle[1], LEFT)
+        c = Text("c").next_to(triangle[2], UP)
+        self.play(Create(triangle), Write(a), Write(b), Write(c))
+        self.wait(5)
 
         self.clear()
-
-        subtitle = Text("Finding vector components", font_size=36)
-        subtitle.to_edge(DOWN)
+        subtitle = Text("Visualizing squares of sides", font_size=36)
+        subtitle.to_edge(UP)
         self.add(subtitle)
 
-        vector = Line(ORIGIN, [2, 2, 0], stroke_color=RED)
-        self.play(Create(vector), run_time=2)
-
-        dashed_x = DashedLine([2, 2, 0], [2, 0, 0], stroke_color=YELLOW)
-        dashed_y = DashedLine([2, 2, 0], [0, 2, 0], stroke_color=YELLOW)
-        self.play(Create(dashed_x), Create(dashed_y), run_time=2)
-
-        x_label = Text("2", font_size=24)
-        x_label.next_to(dashed_x, DOWN, buff=0.2)
-        y_label = Text("2", font_size=24)
-        y_label.next_to(dashed_y, LEFT, buff=0.2)
-        self.play(Write(x_label), Write(y_label), run_time=1)
-
-        self.wait(3)
+        square_a = VGroup(
+            Line(ORIGIN, RIGHT * 3, stroke_width=0.1),
+            Line(ORIGIN, UP * 3, stroke_width=0.1),
+            Line(RIGHT * 3, UP * 3, stroke_width=0.1),
+            Line(RIGHT * 3, ORIGIN, stroke_width=0.1)
+        )
+        square_b = VGroup(
+            Line(RIGHT * 4, RIGHT * 4 + UP * 4, stroke_width=0.1),
+            Line(RIGHT * 4, RIGHT * 4 + RIGHT * 4, stroke_width=0.1),
+            Line(RIGHT * 4 + UP * 4, RIGHT * 4 + UP * 4 + RIGHT * 4, stroke_width=0.1),
+            Line(RIGHT * 4 + RIGHT * 4, RIGHT * 4 + RIGHT * 4 + UP * 4, stroke_width=0.1)
+        )
+        square_c = VGroup(
+            Line(RIGHT * 9, RIGHT * 9 + UP * 5, stroke_width=0.1),
+            Line(RIGHT * 9, RIGHT * 9 + RIGHT * 5, stroke_width=0.1),
+            Line(RIGHT * 9 + UP * 5, RIGHT * 9 + UP * 5 + RIGHT * 5, stroke_width=0.1),
+            Line(RIGHT * 9 + RIGHT * 5, RIGHT * 9 + RIGHT * 5 + UP * 5, stroke_width=0.1)
+        )
+        label_a = Text("a^2").next_to(square_a, DOWN)
+        label_b = Text("b^2").next_to(square_b, DOWN)
+        label_c = Text("c^2").next_to(square_c, DOWN)
+        self.play(Create(square_a), Create(square_b), Create(square_c), Write(label_a), Write(label_b), Write(label_c))
+        self.wait(5)
 
         self.clear()
-
-        subtitle = Text("Understanding vector component relationships", font_size=36)
-        subtitle.to_edge(DOWN)
+        subtitle = Text("Relating squares to triangle sides", font_size=36)
+        subtitle.to_edge(UP)
         self.add(subtitle)
 
-        triangle = Polygon(ORIGIN, [2, 0, 0], [2, 2, 0], stroke_color=WHITE, fill_opacity=0)
-        self.play(Create(triangle), run_time=2)
-
-        x_label = Text("x-component", font_size=24)
-        x_label.next_to(Line(ORIGIN, [2, 0, 0]), DOWN, buff=0.2)
-        y_label = Text("y-component", font_size=24)
-        y_label.next_to(Line(ORIGIN, [0, 2, 0]), LEFT, buff=0.2)
-        self.play(Write(x_label), Write(y_label), run_time=1)
-
-        vector = Line(ORIGIN, [2, 2, 0], stroke_color=RED)
-        self.play(Create(vector), run_time=2)
-
-        self.wait(3)
+        triangle = VGroup(
+            Line(ORIGIN, RIGHT * 3, stroke_width=0.1),
+            Line(ORIGIN, UP * 4, stroke_width=0.1),
+            Line(RIGHT * 3, UP * 4, stroke_width=0.1)
+        )
+        square_a = VGroup(
+            Line(ORIGIN, RIGHT * 3, stroke_width=0.1),
+            Line(ORIGIN, DOWN * 3, stroke_width=0.1),
+            Line(RIGHT * 3, DOWN * 3, stroke_width=0.1),
+            Line(RIGHT * 3, ORIGIN, stroke_width=0.1)
+        )
+        square_b = VGroup(
+            Line(ORIGIN, UP * 4, stroke_width=0.1),
+            Line(ORIGIN, LEFT * 4, stroke_width=0.1),
+            Line(UP * 4, LEFT * 4 + UP * 4, stroke_width=0.1),
+            Line(LEFT * 4, LEFT * 4 + UP * 4, stroke_width=0.1)
+        )
+        square_c = VGroup(
+            Line(RIGHT * 3, RIGHT * 3 + UP * 5, stroke_width=0.1),
+            Line(RIGHT * 3, RIGHT * 3 + RIGHT * 5, stroke_width=0.1),
+            Line(RIGHT * 3 + UP * 5, RIGHT * 3 + UP * 5 + RIGHT * 5, stroke_width=0.1),
+            Line(RIGHT * 3 + RIGHT * 5, RIGHT * 3 + RIGHT * 5 + UP * 5, stroke_width=0.1)
+        )
+        dashed_line_a = DashedLine(square_a[1].get_start(), triangle[0].get_start(), stroke_width=0.1)
+        dashed_line_b = DashedLine(square_b[1].get_start(), triangle[1].get_start(), stroke_width=0.1)
+        dashed_line_c = DashedLine(square_c[1].get_start(), triangle[2].get_start(), stroke_width=0.1)
+        self.play(Create(triangle), Create(square_a), Create(square_b), Create(square_c), Create(dashed_line_a), Create(dashed_line_b), Create(dashed_line_c))
+        self.wait(5)
 
         self.clear()
-
-        subtitle = Text("Visualizing the x-component", font_size=36)
-        subtitle.to_edge(DOWN)
+        subtitle = Text("Pythagorean theorem formula", font_size=36)
+        subtitle.to_edge(UP)
         self.add(subtitle)
 
-        vector = Line(ORIGIN, [2, 2, 0], stroke_color=RED)
-        self.play(Create(vector), run_time=2)
-
-        dashed_x = DashedLine([2, 2, 0], [2, 0, 0], stroke_color=YELLOW)
-        dashed_y = DashedLine([2, 2, 0], [0, 2, 0], stroke_color=YELLOW)
-        self.play(Create(dashed_x), Create(dashed_y), run_time=2)
-
-        x_component = Line(ORIGIN, [2, 0, 0], stroke_color=GREEN)
-        self.play(Create(x_component), run_time=2)
-
-        x_label = Text("x-component", font_size=24)
-        x_label.next_to(x_component, UP, buff=0.2)
-        self.play(Write(x_label), run_time=1)
-
-        self.wait(3)
+        equation = Text("a^2 + b^2 = c^2")
+        arrow_a = Arrow(LEFT * 2, ORIGIN, stroke_width=0.1)
+        arrow_b = Arrow(LEFT * 4, LEFT * 2, stroke_width=0.1)
+        arrow_c = Arrow(ORIGIN, RIGHT * 2, stroke_width=0.1)
+        self.play(Write(equation), Create(arrow_a), Create(arrow_b), Create(arrow_c))
+        self.wait(5)
 
         self.clear()
-
-        subtitle = Text("Visualizing the y-component", font_size=36)
-        subtitle.to_edge(DOWN)
+        subtitle = Text("Applying the theorem to triangles", font_size=36)
+        subtitle.to_edge(UP)
         self.add(subtitle)
 
-        vector = Line(ORIGIN, [2, 2, 0], stroke_color=RED)
-        self.play(Create(vector), run_time=2)
-
-        dashed_x = DashedLine([2, 2, 0], [2, 0, 0], stroke_color=YELLOW)
-        dashed_y = DashedLine([2, 2, 0], [0, 2, 0], stroke_color=YELLOW)
-        self.play(Create(dashed_x), Create(dashed_y), run_time=2)
-
-        y_component = Line(ORIGIN, [0, 2, 0], stroke_color=GREEN)
-        self.play(Create(y_component), run_time=2)
-
-        y_label = Text("y-component", font_size=24)
-        y_label.next_to(y_component, RIGHT, buff=0.2)
-        self.play(Write(y_label), run_time=1)
-
-        self.wait(3)
+        triangle = VGroup(
+            Line(ORIGIN, RIGHT * 3, stroke_width=0.1),
+            Line(ORIGIN, UP * 4, stroke_width=0.1),
+            Line(RIGHT * 3, UP * 4, stroke_width=0.1)
+        )
+        equation = Text("a^2 + b^2 = c^2").next_to(triangle, UP)
+        arrow_a = Arrow(triangle[0].get_start(), equation[0].get_start(), stroke_width=0.1)
+        arrow_b = Arrow(triangle[1].get_start(), equation[3].get_start(), stroke_width=0.1)
+        arrow_c = Arrow(triangle[2].get_start(), equation[6].get_start(), stroke_width=0.1)
+        self.play(Create(triangle), Write(equation), Create(arrow_a), Create(arrow_b), Create(arrow_c))
+        self.wait(5)
 
         self.clear()
-
-        subtitle = Text("Combining vector components", font_size=36)
-        subtitle.to_edge(DOWN)
+        subtitle = Text("Real-world application of theorem", font_size=36)
+        subtitle.to_edge(UP)
         self.add(subtitle)
 
-        x_component = Line(ORIGIN, [2, 0, 0], stroke_color=GREEN)
-        self.play(Create(x_component), run_time=2)
-
-        x_label = Text("x-component", font_size=24)
-        x_label.next_to(x_component, UP, buff=0.2)
-        self.play(Write(x_label), run_time=1)
-
-        y_component = Line(ORIGIN, [0, 2, 0], stroke_color=GREEN)
-        self.play(Create(y_component), run_time=2)
-
-        y_label = Text("y-component", font_size=24)
-        y_label.next_to(y_component, RIGHT, buff=0.2)
-        self.play(Write(y_label), run_time=1)
-
-        vector = Line(ORIGIN, [2, 2, 0], stroke_color=RED)
-        self.play(Create(vector), run_time=2)
-
-        vector_label = Text("Resultant Vector", font_size=24)
-        vector_label.next_to(vector, UP, buff=0.5)
-        self.play(Write(vector_label), run_time=1)
-
-        self.wait(3)
-
-        self.clear()
-
-        subtitle = Text("Resolving vectors into components", font_size=36)
-        subtitle.to_edge(DOWN)
-        self.add(subtitle)
-
-        triangle = Polygon(ORIGIN, [2, 0, 0], [2, 2, 0], stroke_color=WHITE, fill_opacity=0)
-        self.play(Create(triangle), run_time=2)
-
-        x_label = Text("x-component", font_size=24)
-        x_label.next_to(Line(ORIGIN, [2, 0, 0]), DOWN, buff=0.2)
-        y_label = Text("y-component", font_size=24)
-        y_label.next_to(Line(ORIGIN, [0, 2, 0]), LEFT, buff=0.2)
-        self.play(Write(x_label), Write(y_label), run_time=1)
-
-        vector = Line(ORIGIN, [2, 2, 0], stroke_color=RED)
-        self.play(Create(vector), run_time=2)
-
-        vector_label = Text("Resultant Vector", font_size=24)
-        vector_label.next_to(vector, UP, buff=0.5)
-        self.play(Write(vector_label), run_time=1)
-
-        dashed_x = DashedLine([2, 2, 0], [2, 0, 0], stroke_color=YELLOW)
-        dashed_y = DashedLine([2, 2, 0], [0, 2, 0], stroke_color=YELLOW)
-        self.play(Create(dashed_x), Create(dashed_y), run_time=2)
-
-        self.wait(3)
-
-        self.clear()
-
-        subtitle = Text("Visualizing vector addition", font_size=36)
-        subtitle.to_edge(DOWN)
-        self.add(subtitle)
-
-        vector = Line(ORIGIN, [2, 2, 0], stroke_color=RED)
-        self.play(Create(vector), run_time=2)
-
-        vector_label = Text("Resultant", font_size=24)
-        vector_label.next_to(vector, UP, buff=0.5)
-        self.play(Write(vector_label), run_time=1)
-
-        x_component = Line(ORIGIN, [2, 0, 0], stroke_color=GREEN)
-        self.play(Create(x_component), run_time=2)
-
-        x_label = Text("x-component", font_size=24)
-        x_label.next_to(x_component, UP, buff=0.2)
-        self.play(Write(x_label), run_time=1)
-
-        y_component = Line(ORIGIN, [0, 2, 0], stroke_color=GREEN)
-        self.play(Create(y_component), run_time=2)
-
-        y_label = Text("y-component", font_size=24)
-        y_label.next_to(y_component, RIGHT, buff=0.2)
-        self.play(Write(y_label), run_time=1)
-
-        self.wait(3)
+        building = VGroup(
+            Line(ORIGIN, UP * 4, stroke_width=0.1),
+            Line(UP * 4, RIGHT * 3 + UP * 4, stroke_width=0.1),
+            Line(RIGHT * 3 + UP * 4, RIGHT * 3, stroke_width=0.1),
+            Line(RIGHT * 3, ORIGIN, stroke_width=0.1)
+        )
+        dashed_line = DashedLine(building[1].get_start(), RIGHT * 3 + UP * 4 + RIGHT * 3, stroke_width=0.1)
+        label = Text("5 units").next_to(dashed_line, RIGHT)
+        self.play(Create(building), Create(dashed_line), Write(label))
+        self.wait(5)
