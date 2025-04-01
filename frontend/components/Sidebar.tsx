@@ -81,7 +81,7 @@ export default function Sidebar({
           New Chat
         </Button>
       </div>
-      <ScrollArea className="flex-1">
+      <ScrollArea className="flex-1 max-h-[850px] overflow-y-auto">
         <div className="p-4 space-y-2">
           {sessionsList.length > 0 &&
             sessionsList?.map((session, index) => (
