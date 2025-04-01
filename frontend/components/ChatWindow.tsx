@@ -33,9 +33,11 @@ const sendMessageToBackend = async (message: Message): Promise<void> => {
     );
 
     const result = await response.json();
-    console.log("Upload response:", result);
+    console.log("Upload response in sendMessageToBackend:", result);
+  
+    return result;
   } catch (error) {
-    console.error("Upload failed:", error);
+    console.error("Upload failed in sendMessageToBackend:", error);
   }
 };
 
@@ -77,10 +79,10 @@ export default function ChatWindow({
     scrollRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messageHistory]);
 
-  useEffect(() => {
-    console.log("currentSession", currentSession);
-    console.log("chatHistory", messageHistory);
-  });
+  // useEffect(() => {
+  //   console.log("currentSession", currentSession);
+  //   console.log("chatHistory", messageHistory);
+  // });
 
   useEffect(() => {
     if (newSession) {
@@ -122,7 +124,7 @@ export default function ChatWindow({
     setPreviewUrl(URL.createObjectURL(selectedFile));
   };
 
-  const handleSend = () => {
+  const handleSend = async () => {
     if (!input.trim() && !file) return;
     const newMessage: Message = {
       id: null,
@@ -140,20 +142,25 @@ export default function ChatWindow({
     setFile(null);
     setPreviewUrl(null);
 
+    console.log("history", messageHistory);
+    // setTimeout(() => {
+    //   setMessageHistory((prev) => [...prev, aiResponse]);
+    // }, 1000);
+
+    const response = await sendMessageToBackend(newMessage);
+
     const aiResponse: Message = {
       id: null,
       session_id: currentSession?.id || null,
       sender: "ai",
-      message: "hey fuck you",
+      message: response.message,
+      file: null,
+      imageUrl: null,
       time_created: new Date().toISOString(),
     };
 
-    console.log("history", messageHistory);
-    setTimeout(() => {
-      setMessageHistory((prev) => [...prev, aiResponse]);
-    }, 1000);
-
-    sendMessageToBackend(newMessage);
+    setMessageHistory((prev) => [...prev, aiResponse]);
+    console.log("history after", messageHistory);
   };
 
   return (
@@ -314,9 +321,9 @@ export default function ChatWindow({
                 );
 
                 const result = await response.json();
-                console.log("Upload response:", result);
+                console.log("Upload response in ChatWindow:", result);
               } catch (error) {
-                console.error("Upload failed:", error);
+                console.error("Upload failed in ChatWindow:", error);
               }
             }}
           >

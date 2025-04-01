@@ -1,71 +1,141 @@
 from manim import *
 import numpy as np
 
-import numpy as np
-
 class LSTMScene(Scene):
     def construct(self):
-        # Scene 1
-        subtitle1 = Text("Defining the Pythagorean Theorem").scale(0.7).to_edge(DOWN)
-        self.add(subtitle1)
-        self.wait(2)
-        triangle1 = Polygon(ORIGIN, RIGHT*3, UP*4, color=WHITE)
-        a_text = Text("a").next_to(triangle1, DOWN)
-        b_text = Text("b").next_to(triangle1, LEFT)
-        c_text = Text("c").next_to(triangle1, RIGHT).shift(UP*2.5)
-        self.play(Create(triangle1), Write(a_text), Write(b_text), Write(c_text))
-        self.wait(5)
-        self.remove(subtitle1, triangle1, a_text, b_text, c_text)
+        subtitle = Text("Defining a vector in 2D space", font_size=36)
+        subtitle.to_edge(UP)
+        self.add(subtitle)
 
-        # Scene 2
-        subtitle2 = Text("Geometric Interpretation of the Theorem").scale(0.7).to_edge(DOWN)
-        self.add(subtitle2)
-        self.wait(2)
-        triangle2 = Polygon(ORIGIN, RIGHT*3, UP*4, color=WHITE)
-        square_a = Square(side_length=3).next_to(triangle2, DOWN).shift(LEFT*1.5)
-        square_b = Square(side_length=4).next_to(triangle2, LEFT).shift(UP*2)
-        square_c = Square(side_length=5).next_to(triangle2, RIGHT).shift(UP*2.5)
-        self.play(Create(triangle2), Create(square_a), Create(square_b), Create(square_c))
-        self.wait(2)
-        self.play(square_a.animate.shift(RIGHT*4.5), square_b.animate.shift(RIGHT*3), square_c.animate.shift(LEFT*0.5))
-        self.wait(5)
-        self.remove(subtitle2, triangle2, square_a, square_b, square_c)
+        axes = Axes(
+            x_range=[-4, 4, 1],
+            y_range=[-4, 4, 1],
+            x_length=8,
+            y_length=6,
+            axis_config={"include_tip": True},
+        )
+        self.add(axes)
 
-        # Scene 3
-        subtitle3 = Text("Mathematical Representation of the Theorem").scale(0.7).to_edge(DOWN)
-        self.add(subtitle3)
-        self.wait(2)
-        equation = Text("a^2 + b^2 = c^2").scale(1.5)
-        triangle3 = Polygon(ORIGIN, RIGHT*3, UP*4, color=WHITE).shift(DOWN*2)
-        a_arrow = Arrow(equation[0].get_center(), triangle3[0].get_center())
-        b_arrow = Arrow(equation[4].get_center(), triangle3[1].get_center())
-        c_arrow = Arrow(equation[8].get_center(), triangle3[2].get_center())
-        self.play(Write(equation), Create(triangle3), Create(a_arrow), Create(b_arrow), Create(c_arrow))
-        self.wait(5)
-        self.remove(subtitle3, equation, triangle3, a_arrow, b_arrow, c_arrow)
+        vector = Line(ORIGIN, [2, 2, 0], stroke_color=YELLOW, stroke_width=2)
+        vector_arrow = Arrow(vector.get_start(), vector.get_end(), stroke_color=YELLOW, stroke_width=2)
+        self.play(Create(vector), Create(vector_arrow))
+        self.wait(3)
 
-        # Scene 4
-        subtitle4 = Text("Applying the Theorem to Solve for c").scale(0.7).to_edge(DOWN)
-        self.add(subtitle4)
-        self.wait(2)
-        triangle4 = Polygon(ORIGIN, RIGHT*3, UP*4, color=WHITE)
-        equation2 = Text("3^2 + 4^2 = c^2").scale(1.5).shift(UP*2)
-        self.play(Create(triangle4), Write(equation2))
-        self.wait(2)
-        solution = Text("c = sqrt(3^2 + 4^2) = sqrt(25) = 5").scale(1.5).shift(UP*2)
-        self.play(Transform(equation2, solution))
-        self.wait(5)
-        self.remove(subtitle4, triangle4, equation2)
+        self.clear()
 
-        # Scene 5
-        subtitle5 = Text("Universality of the Pythagorean Theorem").scale(0.7).to_edge(DOWN)
-        self.add(subtitle5)
-        self.wait(2)
-        triangles = []
-        for i in range(5):
-            for j in range(5):
-                triangle = Polygon(ORIGIN, RIGHT*(i+1), UP*(j+1), color=WHITE).scale(0.5).shift(RIGHT*i*0.5+UP*j*0.5)
-                triangles.append(triangle)
-        self.play(*[Create(triangle) for triangle in triangles])
-        self.wait(5)
-        self.remove(subtitle5, *triangles)
+        subtitle = Text("Breaking down a vector into components", font_size=36)
+        subtitle.to_edge(UP)
+        self.add(subtitle)
+
+        vector = Line(ORIGIN, [2, 2, 0], stroke_color=YELLOW, stroke_width=2)
+        vector_arrow = Arrow(vector.get_start(), vector.get_end(), stroke_color=YELLOW, stroke_width=2)
+        self.add(vector, vector_arrow)
+
+        dashed_line_x = DashedLine([2, 2, 0], [2, 0, 0], stroke_color=WHITE, stroke_width=1)
+        dashed_line_y = DashedLine([2, 2, 0], [0, 2, 0], stroke_color=WHITE, stroke_width=1)
+        self.play(Create(dashed_line_x), Create(dashed_line_y))
+
+        x_component_label = Text("x component", font_size=24)
+        x_component_label.next_to(dashed_line_x, DOWN)
+        y_component_label = Text("y component", font_size=24)
+        y_component_label.next_to(dashed_line_y, LEFT)
+        self.play(Write(x_component_label), Write(y_component_label))
+
+        x_component_value = Text("2", font_size=24)
+        x_component_value.next_to(x_component_label, DOWN)
+        y_component_value = Text("2", font_size=24)
+        y_component_value.next_to(y_component_label, LEFT)
+        self.play(Write(x_component_value), Write(y_component_value))
+        self.wait(3)
+
+        self.clear()
+
+        subtitle = Text("Calculating magnitude using components", font_size=36)
+        subtitle.to_edge(UP)
+        self.add(subtitle)
+
+        triangle = Polygon(ORIGIN, [2, 0, 0], [2, 2, 0], stroke_color=WHITE, stroke_width=1)
+        self.add(triangle)
+
+        x_label = Text("2", font_size=24)
+        x_label.next_to(triangle, DOWN)
+        y_label = Text("2", font_size=24)
+        y_label.next_to(triangle, LEFT)
+        self.play(Write(x_label), Write(y_label))
+
+        hypotenuse_label = Text("√(2^2 + 2^2)", font_size=24)
+        hypotenuse_label.next_to(triangle, RIGHT)
+        self.play(Write(hypotenuse_label))
+        self.wait(3)
+
+        self.clear()
+
+        subtitle = Text("Understanding negative vector components", font_size=36)
+        subtitle.to_edge(UP)
+        self.add(subtitle)
+
+        vector = Line(ORIGIN, [-2, 2, 0], stroke_color=YELLOW, stroke_width=2)
+        vector_arrow = Arrow(vector.get_start(), vector.get_end(), stroke_color=YELLOW, stroke_width=2)
+        self.add(vector, vector_arrow)
+
+        dashed_line_x = DashedLine([-2, 2, 0], [-2, 0, 0], stroke_color=WHITE, stroke_width=1)
+        dashed_line_y = DashedLine([-2, 2, 0], [0, 2, 0], stroke_color=WHITE, stroke_width=1)
+        self.play(Create(dashed_line_x), Create(dashed_line_y))
+
+        x_component_label = Text("x component", font_size=24)
+        x_component_label.next_to(dashed_line_x, DOWN)
+        y_component_label = Text("y component", font_size=24)
+        y_component_label.next_to(dashed_line_y, LEFT)
+        self.play(Write(x_component_label), Write(y_component_label))
+
+        x_component_value = Text("-2", font_size=24)
+        x_component_value.next_to(x_component_label, DOWN)
+        y_component_value = Text("2", font_size=24)
+        y_component_value.next_to(y_component_label, LEFT)
+        self.play(Write(x_component_value), Write(y_component_value))
+        self.wait(3)
+
+        self.clear()
+
+        subtitle = Text("Adding vectors component-wise", font_size=36)
+        subtitle.to_edge(UP)
+        self.add(subtitle)
+
+        vector1 = Line(ORIGIN, [2, 2, 0], stroke_color=YELLOW, stroke_width=2)
+        vector1_arrow = Arrow(vector1.get_start(), vector1.get_end(), stroke_color=YELLOW, stroke_width=2)
+        self.add(vector1, vector1_arrow)
+
+        vector2 = Line(ORIGIN, [-2, 2, 0], stroke_color=YELLOW, stroke_width=2)
+        vector2_arrow = Arrow(vector2.get_start(), vector2.get_end(), stroke_color=YELLOW, stroke_width=2)
+        self.add(vector2, vector2_arrow)
+
+        dashed_line_x1 = DashedLine([2, 2, 0], [2, 0, 0], stroke_color=WHITE, stroke_width=1)
+        dashed_line_y1 = DashedLine([2, 2, 0], [0, 2, 0], stroke_color=WHITE, stroke_width=1)
+        dashed_line_x2 = DashedLine([-2, 2, 0], [-2, 0, 0], stroke_color=WHITE, stroke_width=1)
+        dashed_line_y2 = DashedLine([-2, 2, 0], [0, 2, 0], stroke_color=WHITE, stroke_width=1)
+        self.play(Create(dashed_line_x1), Create(dashed_line_y1), Create(dashed_line_x2), Create(dashed_line_y2))
+
+        x_component_label1 = Text("x component", font_size=24)
+        x_component_label1.next_to(dashed_line_x1, DOWN)
+        y_component_label1 = Text("y component", font_size=24)
+        y_component_label1.next_to(dashed_line_y1, LEFT)
+        x_component_label2 = Text("x component", font_size=24)
+        x_component_label2.next_to(dashed_line_x2, DOWN)
+        y_component_label2 = Text("y component", font_size=24)
+        y_component_label2.next_to(dashed_line_y2, LEFT)
+        self.play(Write(x_component_label1), Write(y_component_label1), Write(x_component_label2), Write(y_component_label2))
+
+        x_component_value1 = Text("2", font_size=24)
+        x_component_value1.next_to(x_component_label1, DOWN)
+        y_component_value1 = Text("2", font_size=24)
+        y_component_value1.next_to(y_component_label1, LEFT)
+        x_component_value2 = Text("-2", font_size=24)
+        x_component_value2.next_to(x_component_label2, DOWN)
+        y_component_value2 = Text("2", font_size=24)
+        y_component_value2.next_to(y_component_label2, LEFT)
+        self.play(Write(x_component_value1), Write(y_component_value1), Write(x_component_value2), Write(y_component_value2))
+
+        highlight_x1 = SurroundingRectangle(x_component_value1, buff=0.1, stroke_color=YELLOW, stroke_width=2)
+        highlight_x2 = SurroundingRectangle(x_component_value2, buff=0.1, stroke_color=YELLOW, stroke_width=2)
+        self.play(Create(highlight_x1), Create(highlight_x2))
+        self.wait(3)

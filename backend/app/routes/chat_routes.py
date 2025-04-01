@@ -91,6 +91,13 @@ def handle_chat():
         "user_input": user_input,
         "session_id": session_id,
     }
+
+    try:
+        result = graph.invoke(state)
+    except Exception as e:
+        print("Error invoking graph:", e)
+        return jsonify({"error": "Graph processing failed"}), 500
+
     result = graph.invoke(state)
     chat_session_id = session_id
     manim_code = "\n".join(result.get("code_chunks", [])) or None
@@ -159,7 +166,17 @@ def handle_chat():
         video_url=video_url
     )
 
+    print("Post status for AI message:", post_status)
+    print("AI message:", ai_message)
+    print("Returning response now...")
+
+    # print("ai message: " + ai_message)
+    # if (video_url):
+    #     print("video_url: " + video_url)
+
     print(13)
+
+    print("Reached return statement")
     return jsonify({
         "message": ai_message,
         "video_url": video_url
