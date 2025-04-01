@@ -64,6 +64,7 @@ export default function Sidebar({
       );
       const result = await response.json()
       setCurrentSession(result);
+      setNewSession(true)
     } catch (error) {
       console.error(error);
     }

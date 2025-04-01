@@ -88,7 +88,6 @@ export default function ChatWindow({
       setInput("");
       setFile(null);
       setPreviewUrl(null);
-      setCurrentSession(null);
     }
   }, [newSession, setNewSession]);
 
@@ -164,56 +163,60 @@ export default function ChatWindow({
         <div>{currentSession?.time_created}</div>
       </div>
       <div className="flex-1 overflow-y-auto px-4 py-6 space-y-6">
-        {messageHistory.map((msg, idx) => {
-          return (
-            <div key={idx} className="flex items-start gap-4 w-full">
-              <div className="mt-1">
-                {msg.sender === "user" ? (
-                  <User className="h-5 w-5 text-zinc-400" />
-                ) : (
-                  <Bot className="h-5 w-5 text-green-400" />
-                )}
-              </div>
-              <div
-                className={`flex-1 px-4 py-3 text-[15px] leading-relaxed break-words rounded overflow-x-hidden ${
-                  msg.sender === "user"
-                    ? "bg-zinc-800 text-zinc-100"
-                    : "bg-zinc-900 text-zinc-100"
-                }`}
-              >
-                <ReactMarkdown
-                  components={{
-                    p: ({ node, ...props }) => (
-                      <p className="prose prose-invert max-w-none" {...props} />
-                    ),
-                  }}
+        {!newSession &&
+          messageHistory.map((msg, idx) => {
+            return (
+              <div key={idx} className="flex items-start gap-4 w-full">
+                <div className="mt-1">
+                  {msg.sender === "user" ? (
+                    <User className="h-5 w-5 text-zinc-400" />
+                  ) : (
+                    <Bot className="h-5 w-5 text-green-400" />
+                  )}
+                </div>
+                <div
+                  className={`flex-1 px-4 py-3 text-[15px] leading-relaxed break-words rounded overflow-x-hidden ${
+                    msg.sender === "user"
+                      ? "bg-zinc-800 text-zinc-100"
+                      : "bg-zinc-900 text-zinc-100"
+                  }`}
                 >
-                  {msg.message}
-                </ReactMarkdown>
+                  <ReactMarkdown
+                    components={{
+                      p: ({ node, ...props }) => (
+                        <p
+                          className="prose prose-invert max-w-none"
+                          {...props}
+                        />
+                      ),
+                    }}
+                  >
+                    {msg.message}
+                  </ReactMarkdown>
 
-                {msg.imageUrl && (
-                  <div className="mt-3">
-                    <Image
-                      src={msg.imageUrl}
-                      alt="Uploaded"
-                      width={200}
-                      height={200}
-                      className="rounded-md"
-                    />
-                  </div>
-                )}
-
-                {msg.file &&
-                  msg.file.type === "application/pdf" &&
-                  !msg.imageUrl && (
-                    <div className="mt-3 text-sm text-blue-400 underline">
-                      {msg.file.name}
+                  {msg.imageUrl && (
+                    <div className="mt-3">
+                      <Image
+                        src={msg.imageUrl}
+                        alt="Uploaded"
+                        width={200}
+                        height={200}
+                        className="rounded-md"
+                      />
                     </div>
                   )}
+
+                  {msg.file &&
+                    msg.file.type === "application/pdf" &&
+                    !msg.imageUrl && (
+                      <div className="mt-3 text-sm text-blue-400 underline">
+                        {msg.file.name}
+                      </div>
+                    )}
+                </div>
               </div>
-            </div>
-          );
-        })}
+            );
+          })}
         <div ref={scrollRef} />
       </div>
 
@@ -269,6 +272,7 @@ export default function ChatWindow({
             onKeyDown={(e) => {
               if (e.key === "Enter" && !e.shiftKey) {
                 e.preventDefault();
+                setNewSession(false)
                 handleSend();
               }
             }}
