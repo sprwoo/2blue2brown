@@ -107,7 +107,7 @@ def handle_chat():
 
         try:
             print("Uploading video... named: ", video_file)
-            video_url = storage.upload_file(video_file)
+            video_url = storage.upload_file(video_file_path, file_name=f"qdws{int(time.time())}.mp4")
         except Exception as e:
             print("Error uploading video: ", e)
             video_url = None
