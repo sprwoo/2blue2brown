@@ -3,139 +3,149 @@ import numpy as np
 
 class LSTMScene(Scene):
     def construct(self):
-        subtitle = Text("Defining a vector in 2D space", font_size=36)
-        subtitle.to_edge(UP)
-        self.add(subtitle)
-
-        axes = Axes(
+        # Scene 1
+        subtitle1 = Text("Breaking down a vector")
+        subtitle1.to_edge(UP)
+        axes1 = Axes(
             x_range=[-4, 4, 1],
             y_range=[-4, 4, 1],
             x_length=8,
             y_length=6,
-            axis_config={"include_tip": True},
+            axis_config={"include_tip": False},
         )
-        self.add(axes)
-
-        vector = Line(ORIGIN, [2, 2, 0], stroke_color=YELLOW, stroke_width=2)
-        vector_arrow = Arrow(vector.get_start(), vector.get_end(), stroke_color=YELLOW, stroke_width=2)
-        self.play(Create(vector), Create(vector_arrow))
-        self.wait(3)
-
+        vector1 = Vector([2, 2], color=YELLOW)
+        dashed_line1_x = DashedLine([2, 2], [2, 0], color=YELLOW)
+        dashed_line1_y = DashedLine([2, 2], [0, 2], color=YELLOW)
+        self.add(subtitle1, axes1, vector1, dashed_line1_x, dashed_line1_y)
+        self.wait(5)
         self.clear()
 
-        subtitle = Text("Breaking down a vector into components", font_size=36)
-        subtitle.to_edge(UP)
-        self.add(subtitle)
-
-        vector = Line(ORIGIN, [2, 2, 0], stroke_color=YELLOW, stroke_width=2)
-        vector_arrow = Arrow(vector.get_start(), vector.get_end(), stroke_color=YELLOW, stroke_width=2)
-        self.add(vector, vector_arrow)
-
-        dashed_line_x = DashedLine([2, 2, 0], [2, 0, 0], stroke_color=WHITE, stroke_width=1)
-        dashed_line_y = DashedLine([2, 2, 0], [0, 2, 0], stroke_color=WHITE, stroke_width=1)
-        self.play(Create(dashed_line_x), Create(dashed_line_y))
-
-        x_component_label = Text("x component", font_size=24)
-        x_component_label.next_to(dashed_line_x, DOWN)
-        y_component_label = Text("y component", font_size=24)
-        y_component_label.next_to(dashed_line_y, LEFT)
-        self.play(Write(x_component_label), Write(y_component_label))
-
-        x_component_value = Text("2", font_size=24)
-        x_component_value.next_to(x_component_label, DOWN)
-        y_component_value = Text("2", font_size=24)
-        y_component_value.next_to(y_component_label, LEFT)
-        self.play(Write(x_component_value), Write(y_component_value))
-        self.wait(3)
-
+        # Scene 2
+        subtitle2 = Text("Vector components as directions")
+        subtitle2.to_edge(UP)
+        compass = Circle(radius=2, color=YELLOW)
+        center = Dot([0, 0], color=YELLOW)
+        north = Arrow([0, 0], [0, 2], color=YELLOW)
+        east = Arrow([0, 0], [2, 0], color=YELLOW)
+        northeast = DashedLine([0, 0], [2, 2], color=YELLOW)
+        north_label = Text("N").next_to(north, UP)
+        east_label = Text("E").next_to(east, RIGHT)
+        self.add(subtitle2, compass, center, north, east, northeast, north_label, east_label)
+        self.wait(5)
         self.clear()
 
-        subtitle = Text("Calculating magnitude using components", font_size=36)
-        subtitle.to_edge(UP)
-        self.add(subtitle)
-
-        triangle = Polygon(ORIGIN, [2, 0, 0], [2, 2, 0], stroke_color=WHITE, stroke_width=1)
-        self.add(triangle)
-
-        x_label = Text("2", font_size=24)
-        x_label.next_to(triangle, DOWN)
-        y_label = Text("2", font_size=24)
-        y_label.next_to(triangle, LEFT)
-        self.play(Write(x_label), Write(y_label))
-
-        hypotenuse_label = Text("√(2^2 + 2^2)", font_size=24)
-        hypotenuse_label.next_to(triangle, RIGHT)
-        self.play(Write(hypotenuse_label))
-        self.wait(3)
-
+        # Scene 3
+        subtitle3 = Text("Projections onto axes")
+        subtitle3.to_edge(UP)
+        axes3 = ThreeDAxes(
+            x_range=[-4, 4, 1],
+            y_range=[-4, 4, 1],
+            z_range=[-4, 4, 1],
+            x_length=8,
+            y_length=6,
+            z_length=6,
+            axis_config={"include_tip": False},
+        )
+        vector3 = Vector([2, 2, 1], color=YELLOW)
+        dashed_line3_x = DashedLine([2, 2, 1], [2, 0, 0], color=YELLOW)
+        dashed_line3_y = DashedLine([2, 2, 1], [0, 2, 0], color=YELLOW)
+        dashed_line3_z = DashedLine([2, 2, 1], [0, 0, 1], color=YELLOW)
+        self.add(subtitle3, axes3, vector3, dashed_line3_x, dashed_line3_y, dashed_line3_z)
+        self.wait(5)
         self.clear()
 
-        subtitle = Text("Understanding negative vector components", font_size=36)
-        subtitle.to_edge(UP)
-        self.add(subtitle)
-
-        vector = Line(ORIGIN, [-2, 2, 0], stroke_color=YELLOW, stroke_width=2)
-        vector_arrow = Arrow(vector.get_start(), vector.get_end(), stroke_color=YELLOW, stroke_width=2)
-        self.add(vector, vector_arrow)
-
-        dashed_line_x = DashedLine([-2, 2, 0], [-2, 0, 0], stroke_color=WHITE, stroke_width=1)
-        dashed_line_y = DashedLine([-2, 2, 0], [0, 2, 0], stroke_color=WHITE, stroke_width=1)
-        self.play(Create(dashed_line_x), Create(dashed_line_y))
-
-        x_component_label = Text("x component", font_size=24)
-        x_component_label.next_to(dashed_line_x, DOWN)
-        y_component_label = Text("y component", font_size=24)
-        y_component_label.next_to(dashed_line_y, LEFT)
-        self.play(Write(x_component_label), Write(y_component_label))
-
-        x_component_value = Text("-2", font_size=24)
-        x_component_value.next_to(x_component_label, DOWN)
-        y_component_value = Text("2", font_size=24)
-        y_component_value.next_to(y_component_label, LEFT)
-        self.play(Write(x_component_value), Write(y_component_value))
-        self.wait(3)
-
+        # Scene 4
+        subtitle4 = Text("x and y components")
+        subtitle4.to_edge(UP)
+        axes4 = Axes(
+            x_range=[-4, 4, 1],
+            y_range=[-4, 4, 1],
+            x_length=8,
+            y_length=6,
+            axis_config={"include_tip": False},
+        )
+        vector4 = Vector([2, 2], color=YELLOW)
+        dashed_line4_x = DashedLine([2, 2], [2, 0], color=YELLOW)
+        dashed_line4_y = DashedLine([2, 2], [0, 2], color=YELLOW)
+        x_component = Text("x-component").next_to(dashed_line4_x, DOWN)
+        y_component = Text("y-component").next_to(dashed_line4_y, LEFT)
+        self.add(subtitle4, axes4, vector4, dashed_line4_x, dashed_line4_y, x_component, y_component)
+        self.wait(5)
         self.clear()
 
-        subtitle = Text("Adding vectors component-wise", font_size=36)
-        subtitle.to_edge(UP)
-        self.add(subtitle)
+        # Scene 5
+        subtitle5 = Text("Calculating vector components")
+        subtitle5.to_edge(UP)
+        axes5 = Axes(
+            x_range=[-4, 4, 1],
+            y_range=[-4, 4, 1],
+            x_length=8,
+            y_length=6,
+            axis_config={"include_tip": False},
+        )
+        vector5 = Vector([2, 2], color=YELLOW)
+        dashed_line5_x = DashedLine([2, 2], [2, 0], color=YELLOW)
+        dashed_line5_y = DashedLine([2, 2], [0, 2], color=YELLOW)
+        x_value = Text("x = 2").next_to(dashed_line5_x, DOWN)
+        y_value = Text("y = 2").next_to(dashed_line5_y, LEFT)
+        vector_components = Text("Vector components").above(axes5)
+        self.add(subtitle5, axes5, vector5, dashed_line5_x, dashed_line5_y, x_value, y_value, vector_components)
+        self.wait(5)
+        self.clear()
 
-        vector1 = Line(ORIGIN, [2, 2, 0], stroke_color=YELLOW, stroke_width=2)
-        vector1_arrow = Arrow(vector1.get_start(), vector1.get_end(), stroke_color=YELLOW, stroke_width=2)
-        self.add(vector1, vector1_arrow)
+        # Scene 6
+        subtitle6 = Text("Comparing vector components")
+        subtitle6.to_edge(UP)
+        axes6 = Axes(
+            x_range=[-4, 4, 1],
+            y_range=[-4, 4, 1],
+            x_length=8,
+            y_length=6,
+            axis_config={"include_tip": False},
+        )
+        vector6_1 = Vector([2, 2], color=YELLOW)
+        vector6_2 = Vector([3, 1], color=YELLOW)
+        dashed_line6_1_x = DashedLine([2, 2], [2, 0], color=YELLOW)
+        dashed_line6_1_y = DashedLine([2, 2], [0, 2], color=YELLOW)
+        dashed_line6_2_x = DashedLine([3, 1], [3, 0], color=YELLOW)
+        dashed_line6_2_y = DashedLine([3, 1], [0, 1], color=YELLOW)
+        self.add(subtitle6, axes6, vector6_1, vector6_2, dashed_line6_1_x, dashed_line6_1_y, dashed_line6_2_x, dashed_line6_2_y)
+        self.wait(5)
+        self.clear()
 
-        vector2 = Line(ORIGIN, [-2, 2, 0], stroke_color=YELLOW, stroke_width=2)
-        vector2_arrow = Arrow(vector2.get_start(), vector2.get_end(), stroke_color=YELLOW, stroke_width=2)
-        self.add(vector2, vector2_arrow)
+        # Scene 7
+        subtitle7 = Text("Understanding vector components")
+        subtitle7.to_edge(UP)
+        axes7 = Axes(
+            x_range=[-4, 4, 1],
+            y_range=[-4, 4, 1],
+            x_length=8,
+            y_length=6,
+            axis_config={"include_tip": False},
+        )
+        vector7 = Vector([2, 2], color=YELLOW)
+        dashed_line7_x = DashedLine([2, 2], [2, 0], color=YELLOW)
+        dashed_line7_y = DashedLine([2, 2], [0, 2], color=YELLOW)
+        vector_components_7 = Text("Vector components are projections").above(axes7)
+        self.add(subtitle7, axes7, vector7, dashed_line7_x, dashed_line7_y, vector_components_7)
+        self.wait(5)
+        self.clear()
 
-        dashed_line_x1 = DashedLine([2, 2, 0], [2, 0, 0], stroke_color=WHITE, stroke_width=1)
-        dashed_line_y1 = DashedLine([2, 2, 0], [0, 2, 0], stroke_color=WHITE, stroke_width=1)
-        dashed_line_x2 = DashedLine([-2, 2, 0], [-2, 0, 0], stroke_color=WHITE, stroke_width=1)
-        dashed_line_y2 = DashedLine([-2, 2, 0], [0, 2, 0], stroke_color=WHITE, stroke_width=1)
-        self.play(Create(dashed_line_x1), Create(dashed_line_y1), Create(dashed_line_x2), Create(dashed_line_y2))
-
-        x_component_label1 = Text("x component", font_size=24)
-        x_component_label1.next_to(dashed_line_x1, DOWN)
-        y_component_label1 = Text("y component", font_size=24)
-        y_component_label1.next_to(dashed_line_y1, LEFT)
-        x_component_label2 = Text("x component", font_size=24)
-        x_component_label2.next_to(dashed_line_x2, DOWN)
-        y_component_label2 = Text("y component", font_size=24)
-        y_component_label2.next_to(dashed_line_y2, LEFT)
-        self.play(Write(x_component_label1), Write(y_component_label1), Write(x_component_label2), Write(y_component_label2))
-
-        x_component_value1 = Text("2", font_size=24)
-        x_component_value1.next_to(x_component_label1, DOWN)
-        y_component_value1 = Text("2", font_size=24)
-        y_component_value1.next_to(y_component_label1, LEFT)
-        x_component_value2 = Text("-2", font_size=24)
-        x_component_value2.next_to(x_component_label2, DOWN)
-        y_component_value2 = Text("2", font_size=24)
-        y_component_value2.next_to(y_component_label2, LEFT)
-        self.play(Write(x_component_value1), Write(y_component_value1), Write(x_component_value2), Write(y_component_value2))
-
-        highlight_x1 = SurroundingRectangle(x_component_value1, buff=0.1, stroke_color=YELLOW, stroke_width=2)
-        highlight_x2 = SurroundingRectangle(x_component_value2, buff=0.1, stroke_color=YELLOW, stroke_width=2)
-        self.play(Create(highlight_x1), Create(highlight_x2))
-        self.wait(3)
+        # Scene 8
+        subtitle8 = Text("Reviewing vector components")
+        subtitle8.to_edge(UP)
+        axes8 = Axes(
+            x_range=[-4, 4, 1],
+            y_range=[-4, 4, 1],
+            x_length=8,
+            y_length=6,
+            axis_config={"include_tip": False},
+        )
+        vector8 = Vector([2, 2], color=YELLOW)
+        dashed_line8_x = DashedLine([2, 2], [2, 0], color=YELLOW)
+        dashed_line8_y = DashedLine([2, 2], [0, 2], color=YELLOW)
+        x_component_8 = Text("x-component").next_to(dashed_line8_x, DOWN)
+        y_component_8 = Text("y-component").next_to(dashed_line8_y, LEFT)
+        vector_8 = Text("Vector").above(axes8)
+        self.add(subtitle8, axes8, vector8, dashed_line8_x, dashed_line8_y, x_component_8, y_component_8, vector_8)
+        self.wait(5)

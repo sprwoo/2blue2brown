@@ -34,7 +34,7 @@ const sendMessageToBackend = async (message: Message): Promise<void> => {
 
     const result = await response.json();
     console.log("Upload response in sendMessageToBackend:", result);
-  
+
     return result;
   } catch (error) {
     console.error("Upload failed in sendMessageToBackend:", error);
@@ -62,6 +62,7 @@ export default function ChatWindow({
   const [file, setFile] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [dragActive, setDragActive] = useState(false);
+  const [videoUrl, setVideoUrl] = useState(null);
   const scrollRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
@@ -150,18 +151,33 @@ export default function ChatWindow({
     const response = await sendMessageToBackend(newMessage);
     const aiMessage = response.message;
     const videoUrl = response.video_url;
-    
-    const aiResponse: Message = {
-      id: null,
-      session_id: currentSession?.id || null,
-      sender: "ai",
-      message: aiMessage,
-      file: null,
-      imageUrl: null,
-      time_created: new Date().toISOString(),
-    };
 
-    setMessageHistory((prev) => [...prev, aiResponse]);
+    const newMessages: Message[] = [
+      {
+        id: null,
+        session_id: currentSession?.id || null,
+        sender: "ai",
+        message: aiMessage,
+        file: null,
+        imageUrl: null,
+        time_created: new Date().toISOString(),
+      },
+    ];
+
+    if (videoUrl) {
+      newMessages.push({
+        id: null,
+        session_id: currentSession?.id || null,
+        sender: "ai",
+        message: `<video controls class="rounded w-full max-w-md mt-2"><source src="${videoUrl}" type="video/mp4">Your browser does not support the video tag.</video>`,
+        file: null,
+        imageUrl: null,
+        time_created: new Date().toISOString(),
+      });
+    }
+
+    setMessageHistory((prev) => [...prev, ...newMessages]);
+
     console.log("history after", messageHistory);
   };
 
@@ -190,18 +206,10 @@ export default function ChatWindow({
                       : "bg-zinc-900 text-zinc-100"
                   }`}
                 >
-                  <ReactMarkdown
-                    components={{
-                      p: ({ node, ...props }) => (
-                        <p
-                          className="prose prose-invert max-w-none"
-                          {...props}
-                        />
-                      ),
-                    }}
-                  >
-                    {msg.message}
-                  </ReactMarkdown>
+                  <div
+                    className="prose prose-invert max-w-none"
+                    dangerouslySetInnerHTML={{ __html: msg.message }}
+                  />
 
                   {msg.imageUrl && (
                     <div className="mt-3">
@@ -281,7 +289,7 @@ export default function ChatWindow({
             onKeyDown={(e) => {
               if (e.key === "Enter" && !e.shiftKey) {
                 e.preventDefault();
-                setNewSession(false)
+                setNewSession(false);
                 handleSend();
               }
             }}
