@@ -1,11 +1,7 @@
 # app/langgraph_nodes/context.py
 
 from app.controllers.chunky import Chunky
-
-# Stub for database integration; replace with actual implementation as needed.
-def get_chat_histories(session_id):
-    # For now, return an empty list to simulate no chat history.
-    return []
+from app.services.supabase import get_chat_histories
 
 def load_context(state):
     session_id = state.get("session_id")
