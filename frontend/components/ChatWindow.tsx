@@ -17,7 +17,7 @@ const sendMessageToBackend = async (message: Message): Promise<void> => {
   formData.append("session_id", message.session_id || "NULL");
   formData.append("sender", message.sender || "user");
   formData.append("user_input", message.message || "");
-  formData.append("image_url", message.imageUrl || "");
+  // formData.append("image_url", message.imageUrl || "");
   formData.append("time_created", message.time_created || "");
   formData.append("image_summary", message.imageSummary || "");
 
@@ -102,7 +102,6 @@ export default function ChatWindow({
       setInput("");
       setFile(null);
       setPreviewUrl(null);
-      setNewSession(false);
       setCurrentSession(null);
     }
   }, [newSession, setNewSession]);
@@ -140,6 +139,11 @@ export default function ChatWindow({
 
   const handleSend = () => {
     if (!input.trim() && !file) return;
+
+    if (newSession) {
+      console.log("Make new session");
+      setNewSession(false);
+    }
 
     const newMessage: Message = {
       id: null,

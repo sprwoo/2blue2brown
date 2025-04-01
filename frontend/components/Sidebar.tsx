@@ -44,7 +44,7 @@ export default function Sidebar({
       `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/get_chat_session?uuid=${id}`
     );
     const session_result = await session_response.json();
-    console.log("results: ", session_result);
+    console.log("current session: ", session_result);
 
     const history_response = await fetch(
       `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/get_chat_histories?chat_session_id=${id}`

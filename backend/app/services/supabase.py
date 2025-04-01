@@ -46,7 +46,6 @@ def get_latest_chat_session():
     except Exception as error:
         return {"error": str(error)}
 
-
 def get_all_chat_sessions():
     try:
         url = f"{SUPABASE_URL}/rest/v1/chat_sessions?order=time_created.desc"
