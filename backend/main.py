@@ -2,6 +2,7 @@
 
 import os
 import sys
+import time
 
 # Ensure the 'app' folder is in the Python path.
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
@@ -68,7 +69,7 @@ def main():
         
         # Determine the rendered video file.
         # In your logs, Manim saved the video here:
-        video_file = os.path.join("media", "videos", "manim", "480p15", "LSTMScene.mp4")
+        video_file = os.path.join("media", "videos", "manim", "480p15", f"LSTMScene{int(time.time())}.mp4")
         
         # Use the director's response as the voiceover script.
         script_text = final_state.get("chat_response", "No voiceover script available")
