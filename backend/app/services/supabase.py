@@ -142,3 +142,25 @@ def post_message(sender, message, chat_session_id, image_url=None, manim_code=No
             return {"error": response.text}
     except Exception as error:
         return {"error": str(error)}
+
+def create_new_session():
+    url = f"{SUPABASE_URL}/rest/v1/chat_sessions"
+    headers = {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+        'Content-Profile': 'chatbotschema',
+        'apikey': SUPABASE_ANON_KEY
+    }
+    data = {
+        "title": "New Session",
+    }
+    response = requests.post(url, headers=headers, json=data)
+
+    print("BROSKI DOWKSI")
+    if response.status_code == 201:
+        try:
+            return {"success": "Session created successfully!", "data": response.json()}
+        except ValueError:
+            return {"success": "Session created, but no JSON returned"}
+    else:
+        return {"error": response.text, "status_code": response.status_code}

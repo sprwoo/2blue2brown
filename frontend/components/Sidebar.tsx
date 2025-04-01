@@ -37,23 +37,34 @@ export default function Sidebar({
     };
     getSessions();
   }, []);
-
-  useEffect(() => console.log("sessions", sessionsList));
+  
   const handleSession = async (id: string) => {
     const session_response = await fetch(
       `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/get_chat_session?uuid=${id}`
     );
     const session_result = await session_response.json();
-    console.log("current session: ", session_result);
 
     const history_response = await fetch(
       `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/get_chat_histories?chat_session_id=${id}`
     );
     const history_result = await history_response.json();
-    console.log("history: ", history_result);
 
     setCurrentSession(session_result);
     setMessageHistory(history_result);
+  };
+
+  const handleNewSession = async () => {
+    try {
+      await fetch(
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/create_new_session`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+        }
+      );
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   return (
@@ -62,9 +73,7 @@ export default function Sidebar({
         <Button
           className="w-full cursor-pointer flex gap-2 bg-zinc-800 text-zinc-100 hover:bg-zinc-700 transition-colors duration-200"
           variant="secondary"
-          onClick={() => {
-            setNewSession(true); // Make a new session
-          }}
+          onClick={handleNewSession}
         >
           <Plus className="mr-2 h-4 w-4" />
           New Chat

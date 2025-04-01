@@ -21,7 +21,7 @@ const createNewSession = async () => {
   );
   const result = await response.json();
   return result;
-}
+};
 
 const sendMessageToBackend = async (message: Message): Promise<void> => {
   console.log("Sending message to backend...");
@@ -70,23 +70,6 @@ export default function ChatWindow({
   newSession: boolean;
   setNewSession: React.Dispatch<React.SetStateAction<boolean>>;
 }) {
-  // const [messages, setMessages] = useState<Message[]>([
-  //   {
-  //     id: null,
-  //     session_id: null,
-  //     time_created: null,
-  //     sender: "user",
-  //     content: "What is the Pythagorean theorem?",
-  //   },
-  //   {
-  //     id: null,
-  //     session_id: null,
-  //     time_created: null,
-  //     sender: "ai",
-  //     content:
-  //       "The Pythagorean theorem states that:\n\n**a² + b² = c²**\n\nWhere *a* and *b* are the legs of a right triangle and *c* is the hypotenuse.",
-  //   },
-  // ]);
   const [input, setInput] = useState("");
   const [file, setFile] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);

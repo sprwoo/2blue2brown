@@ -1,23 +1,15 @@
 from flask import Blueprint, jsonify, request
-from app.services.supabase import post_message, get_chat_histories
+from app.services.supabase import post_message, get_chat_histories, create_new_session
 from app.controllers import Chunky, build_graph
 import os
 import base64
 from .blawb import SupabaseStorage
 
 chat_bp = Blueprint("chat", __name__)
-# @chat_bp.route("/send_message", methods=["POST"])
-# def route_send_message():
-#     data = request.json
-#     chat_session_id = data.get('chat_session_id')
-#     sender = data.get('sender')
-#     message = data.get('message')
-
-#     if not all([chat_session_id, sender, message]):
-#         return jsonify({"error": "chat_session_id, sender, and message are required"}), 400
-
-#     result = post_message(sender, message)
-#     return jsonify(result), 200
+@chat_bp.route("/create_new_session", methods=["POST"])
+def route_send_message():
+    result = create_new_session()
+    return jsonify(result), 200
 
 @chat_bp.route("/get_chat_histories", methods=["GET"])
 def route_chat_histories():
