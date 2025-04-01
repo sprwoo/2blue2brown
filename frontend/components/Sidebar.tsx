@@ -37,7 +37,7 @@ export default function Sidebar({
     };
     getSessions();
   }, []);
-  
+
   const handleSession = async (id: string) => {
     const session_response = await fetch(
       `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/get_chat_session?uuid=${id}`
@@ -49,19 +49,21 @@ export default function Sidebar({
     );
     const history_result = await history_response.json();
 
-    setCurrentSession(session_result);
+    setCurrentSession(session_result[0]);
     setMessageHistory(history_result);
   };
 
   const handleNewSession = async () => {
     try {
-      await fetch(
+      const response = await fetch(
         `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/create_new_session`,
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
         }
       );
+      const result = await response.json()
+      setCurrentSession(result);
     } catch (error) {
       console.error(error);
     }

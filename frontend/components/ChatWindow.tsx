@@ -9,20 +9,6 @@ import Image from "next/image";
 import ReactMarkdown from "react-markdown";
 import { Session, Message } from "@/lib/types";
 
-const createNewSession = async () => {
-  const response = await fetch(
-    `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/create_chat_session`,
-    {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-    }
-  );
-  const result = await response.json();
-  return result;
-};
-
 const sendMessageToBackend = async (message: Message): Promise<void> => {
   console.log("Sending message to backend...");
   const formData = new FormData();
@@ -92,6 +78,11 @@ export default function ChatWindow({
   }, [messageHistory]);
 
   useEffect(() => {
+    console.log("currentSession", currentSession);
+    console.log("chatHistory", messageHistory);
+  });
+
+  useEffect(() => {
     if (newSession) {
       setMessageHistory([]);
       setInput("");
@@ -134,12 +125,6 @@ export default function ChatWindow({
 
   const handleSend = () => {
     if (!input.trim() && !file) return;
-
-    if (newSession) {
-      console.log("Make new session");
-      setNewSession(false);
-    }
-
     const newMessage: Message = {
       id: null,
       session_id: currentSession?.id || null,
@@ -175,8 +160,8 @@ export default function ChatWindow({
   return (
     <div className="flex flex-col max-w-[1200px] bg-zinc-950">
       <div className="border-b border-zinc-800 p-4 h-17.25 text-sm font-semibold text-zinc-200">
-        <div>{newSession ? "" : currentSession?.title || "New Chat"}</div>
-        <div>{newSession ? "" : currentSession?.time_created || ""}</div>
+        <div>{currentSession?.title}</div>
+        <div>{currentSession?.time_created}</div>
       </div>
       <div className="flex-1 overflow-y-auto px-4 py-6 space-y-6">
         {messageHistory.map((msg, idx) => {

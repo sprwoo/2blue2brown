@@ -149,18 +149,23 @@ def create_new_session():
         'Content-Type': 'application/json',
         'Accept': 'application/json',
         'Content-Profile': 'chatbotschema',
+        'Prefer': 'return=representation',  
         'apikey': SUPABASE_ANON_KEY
     }
+
     data = {
         "title": "New Session",
     }
     response = requests.post(url, headers=headers, json=data)
 
-    print("BROSKI DOWKSI")
     if response.status_code == 201:
         try:
-            return {"success": "Session created successfully!", "data": response.json()}
+            session_data = response.json()
+            if isinstance(session_data, list) and session_data:
+                return session_data[0]  # return the inserted session object
+            return session_data
         except ValueError:
-            return {"success": "Session created, but no JSON returned"}
+            return {"error": "Session created, but response is not valid JSON"}
     else:
         return {"error": response.text, "status_code": response.status_code}
+
