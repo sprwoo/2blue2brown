@@ -2,6 +2,7 @@ from flask import Blueprint, jsonify, request
 from app.services.supabase import post_message, get_chat_histories, create_new_session
 from app.controllers import Chunky, build_graph
 import os
+import time
 import base64
 from .blawb import SupabaseStorage
 
@@ -85,7 +86,7 @@ def handle_chat():
         
         video_maker = VideoMaker(
             script_file=combined_file,
-            scene_name="LSTMScene",
+            scene_name=f"LSTMScene{int(time.time())}",
             quality='l',
             preview=False
         )
@@ -98,7 +99,7 @@ def handle_chat():
         print("Video rendering complete. Check the media folder for the output MP4.")
         print(7)
 
-        video_file = os.path.join("media", "videos", "manim", "480p15", "qdws.mp4")
+        video_file = os.path.join("media", "videos", "manim", "480p15", f"qdws{int(time.time())}.mp4")
         print(8)
 
         storage = SupabaseStorage()
