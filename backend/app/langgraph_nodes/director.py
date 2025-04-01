@@ -27,7 +27,7 @@ async def summary(state):
 async def generate_script_chunks(state):
     user_input = state.get("user_input")
     chat_summary = state.get("chat_summary", "")
-    
+        
     prompt = (
         "You are a video director tasked with creating a short educational animation using Manim, the animation engine behind 3Blue1Brown. "
         "Your goal is to design a series of 5–9 independent scenes based on the user’s input and the chat context provided below. "
@@ -56,20 +56,14 @@ async def generate_script_chunks(state):
         "- Output a valid JSON array where each element is an object with exactly two keys: 'scene_description' and 'subtitle_script'.\n"
         "- Do not include any additional commentary, explanations, or text outside the JSON array.\n\n"
         
-        "Example scene:\n"
-        "```json\n"
-        "{\n"
-        "  \"scene_description\": \"On a blank canvas, draw a circle of radius 0.5 at the center (0, 0). "
-        "Add a Text object 'Neuron' positioned 1 unit above at (0, 1). "
-        "Draw two arrows of length 1 entering from the left at (-2, 0.5) and (-2, -0.5), and one arrow of length 1 exiting to the right at (2, 0).\",\n"
-        "  \"subtitle_script\": \"A single neuron processes inputs\"\n"
-        "}\n"
-        "```\n\n"
+        "For example, a valid scene could be:\n"
+        "{\"scene_description\": \"On a blank canvas, draw a circle of radius 0.5 at the center and add a Text object above it saying 'Neuron'.\", "
+        "\"subtitle_script\": \"Introducing a single neuron\"}\n\n"
         
         "Now, using the following context, generate the JSON array of scenes:\n\n"
         f"Chat Summary:\n{chat_summary}\n\n"
         f"User Message:\n{user_input}\n\n"
-        "Output:\n"
+        "Output:"
     )
 
     chunky = Chunky()
