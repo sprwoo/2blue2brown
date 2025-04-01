@@ -80,6 +80,8 @@ def handle_chat():
     chat_session_id = session_id
     manim_code = "\n".join(result.get("code_chunks", [])) or None
     
+    video_url = None
+
     if manim_code:
         print(1)
         combiner = CombinedCodeGenerator(result.get("code_chunks"))
@@ -123,6 +125,7 @@ def handle_chat():
 
     ai_message = result.get("chat_response")
     print(12)
+    
     post_status = post_message(
        "ai",
        ai_message,

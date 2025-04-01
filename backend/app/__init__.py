@@ -10,6 +10,6 @@ def create_app():
     app.register_blueprint(session_bp, url_prefix="/api")
     app.register_blueprint(upload_bp, url_prefix="/api")
 
-    CORS(app, resources={r"/api/*": {"origins": ["http://localhost:3000"]}}, supports_credentials=True)
+    CORS(app)
 
     return app
