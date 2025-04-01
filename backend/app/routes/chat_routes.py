@@ -160,5 +160,7 @@ def handle_chat():
     )
 
     print(13)
-
-    return jsonify(post_status), 200
+    return jsonify({
+        "message": ai_message,
+        "video_url": video_url
+    }), 200
