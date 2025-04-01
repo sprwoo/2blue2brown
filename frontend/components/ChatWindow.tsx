@@ -148,12 +148,14 @@ export default function ChatWindow({
     // }, 1000);
 
     const response = await sendMessageToBackend(newMessage);
-
+    const aiMessage = response.message;
+    const videoUrl = response.video_url;
+    
     const aiResponse: Message = {
       id: null,
       session_id: currentSession?.id || null,
       sender: "ai",
-      message: response.message,
+      message: aiMessage,
       file: null,
       imageUrl: null,
       time_created: new Date().toISOString(),
