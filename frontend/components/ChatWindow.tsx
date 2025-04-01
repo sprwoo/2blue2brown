@@ -9,17 +9,29 @@ import Image from "next/image";
 import ReactMarkdown from "react-markdown";
 import { Session, Message } from "@/lib/types";
 
+const createNewSession = async () => {
+  const response = await fetch(
+    `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/create_chat_session`,
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    }
+  );
+  const result = await response.json();
+  return result;
+}
+
 const sendMessageToBackend = async (message: Message): Promise<void> => {
   console.log("Sending message to backend...");
   const formData = new FormData();
-  // formData.append("session_id", message.session_id || "Session 1");
-  // formData.append("user_input", message.message || "");
   formData.append("session_id", message.session_id || "NULL");
   formData.append("sender", message.sender || "user");
   formData.append("user_input", message.message || "");
-  // formData.append("image_url", message.imageUrl || "");
-  formData.append("time_created", message.time_created || "");
+  formData.append("image_url", message.imageUrl || "");
   formData.append("image_summary", message.imageSummary || "");
+  formData.append("time_created", message.time_created || "");
 
   if (message.file) {
     formData.append("file", message.file);

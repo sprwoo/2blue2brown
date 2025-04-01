@@ -77,7 +77,7 @@ export default function Sidebar({
               <div
                 key={`${session.id}-${index}`}
                 className="p-3 rounded-lg bg-zinc-800 hover:bg-zinc-700 cursor-pointer"
-                onClick={() => setCurrentSession(session)}
+                onClick={() => handleSession(session.id)}
               >
                 <div className="text-sm font-medium">{session.title}</div>
                 <div className="text-xs text-zinc-400">
