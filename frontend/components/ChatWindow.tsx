@@ -63,6 +63,7 @@ export default function ChatWindow({
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [dragActive, setDragActive] = useState(false);
   const [videoUrl, setVideoUrl] = useState(null);
+  const [isProcessing, setIsProcessing] = useState(false);
   const scrollRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
@@ -127,6 +128,7 @@ export default function ChatWindow({
 
   const handleSend = async () => {
     if (!input.trim() && !file) return;
+    setIsProcessing(true);
     const newMessage: Message = {
       id: null,
       session_id: currentSession?.id || null,
@@ -179,6 +181,7 @@ export default function ChatWindow({
     setMessageHistory((prev) => [...prev, ...newMessages]);
 
     console.log("history after", messageHistory);
+    setIsProcessing(false);
   };
 
   return (
@@ -200,11 +203,10 @@ export default function ChatWindow({
                   )}
                 </div>
                 <div
-                  className={`flex-1 px-4 py-3 text-[15px] leading-relaxed break-words rounded overflow-x-hidden ${
-                    msg.sender === "user"
+                  className={`flex-1 px-4 py-3 text-[15px] leading-relaxed break-words rounded overflow-x-hidden ${msg.sender === "user"
                       ? "bg-zinc-800 text-zinc-100"
                       : "bg-zinc-900 text-zinc-100"
-                  }`}
+                    }`}
                 >
                   <div
                     className="prose prose-invert max-w-none"
@@ -236,12 +238,11 @@ export default function ChatWindow({
           })}
         <div ref={scrollRef} />
       </div>
-
+      
       <div
         {...getRootProps()}
-        className={`border-t border-zinc-800 p-4 relative ${
-          dragActive ? "border-2 border-dashed border-blue-400 bg-zinc-900" : ""
-        }`}
+        className={`border-t border-zinc-800 p-4 relative ${dragActive ? "border-2 border-dashed border-blue-400 bg-zinc-900" : ""
+          }`}
       >
         <input {...getInputProps()} />
         {dragActive && (
@@ -279,21 +280,31 @@ export default function ChatWindow({
           </div>
         )}
 
-        <div className="flex items-center justify-between gap-2 w-[1150px]">
-          <Textarea
-            placeholder="Type your message or drag a file..."
-            className="flex-1 resize-none h-10"
-            rows={1}
-            value={input}
-            onChange={(e) => setInput(e.target.value)}
-            onKeyDown={(e) => {
-              if (e.key === "Enter" && !e.shiftKey) {
-                e.preventDefault();
-                setNewSession(false);
-                handleSend();
-              }
-            }}
-          />
+        <div className="relative flex items-center justify-between gap-2 w-[1150px]">
+          <div className="relative flex-1">
+            <Textarea
+              placeholder="Type your message or drag a file..."
+              className={`flex-1 resize-none h-10 pr-10 ${
+                isProcessing ? "opacity-70" : ""
+              }`}
+              rows={1}
+              value={input}
+              onChange={(e) => setInput(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter" && !e.shiftKey) {
+                  e.preventDefault();
+                  setNewSession(false);
+                  handleSend();
+                }
+              }}
+              disabled={isProcessing} // Disable input while processing
+            />
+            {isProcessing && (
+              <div className="absolute inset-y-0 right-2 flex items-center">
+                <div className="animate-spin rounded-full h-5 w-5 border-t-2 border-b-2 border-blue-500"></div>
+              </div>
+            )}
+          </div>
           <input
             type="file"
             ref={fileInputRef}
@@ -301,45 +312,12 @@ export default function ChatWindow({
             onChange={handleFileSelect}
             className="hidden"
           />
-
           <Button
             className="h-[62px] cursor-pointer px-4"
             onClick={() => fileInputRef.current?.click()}
           >
             Choose File
           </Button>
-          <Button
-            className="h-[62px] cursor-pointer px-4"
-            onClick={async () => {
-              if (!file) return;
-
-              const formData = new FormData();
-              formData.append("image", file);
-              formData.append(
-                "session_id",
-                "1828e6f9-707d-4d04-b5e5-5d036698b9d6"
-              );
-              formData.append("user_input", input);
-
-              try {
-                const response = await fetch(
-                  `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/chat`,
-                  {
-                    method: "POST",
-                    body: formData,
-                  }
-                );
-
-                const result = await response.json();
-                console.log("Upload response in ChatWindow:", result);
-              } catch (error) {
-                console.error("Upload failed in ChatWindow:", error);
-              }
-            }}
-          >
-            Upload
-          </Button>
-
           <Button onClick={handleSend} className="h-[62px] cursor-pointer px-4">
             <Send className="h-4 w-4" />
           </Button>
